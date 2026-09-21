@@ -1,0 +1,10 @@
+.deploy-build-context/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/*.tfplan

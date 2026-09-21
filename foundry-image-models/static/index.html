@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Foundry image models</title>
+    <link rel="stylesheet" href="/static/tokens.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <!--
+    THESIS: The same prompt across five models is the product; the interface refuses dashboard cards and lets evidence lead.
+    OWN-WORLD: White light, ink-blue type, cool gray rules, electric blue actions, square-edged controls, and one thin five-model spectrum.
+    STORY: Understand the comparison immediately, inspect one prompt across every model, then generate, download, or clear a private session.
+    FIRST VIEWPORT: A sticky product strip holds view navigation, identity, logout, and GitHub; the active workspace begins immediately below it.
+    FORM: Precision comparison surface, balancing Stripe-like information confidence with Apple-like restraint and material simplicity.
+    -->
+    <div class="app-shell">
+      <header class="masthead">
+        <a class="product-mark" href="/" aria-label="Foundry image models home">
+          <span class="product-mark__foundry">Microsoft Foundry</span>
+          <span class="product-mark__divider" aria-hidden="true"></span>
+          <span>Image models</span>
+        </a>
+        <nav class="view-tabs" aria-label="Primary views">
+          <button type="button" class="view-tab is-active" data-view="gallery" aria-pressed="true">
+            Gallery
+          </button>
+          <button type="button" class="view-tab" data-view="playground" aria-pressed="false">
+            Playground
+          </button>
+        </nav>
+        <div class="header-actions">
+          <div class="session-chip" id="sessionChip" hidden>
+            <span class="session-avatar" id="sessionName" aria-hidden="true"></span>
+            <span class="sr-only" id="sessionUsername"></span>
+            <a class="session-chip__signout" id="signOutLink" href="/logout">Log out</a>
+          </div>
+          <a
+            class="github-link"
+            href="https://github.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open GitHub"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.29-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.71 5.4-5.29 5.69.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"
+              />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section id="gallery-panel" class="panel panel--gallery" aria-labelledby="gallery-title">
+          <div class="panel__head panel__head--gallery">
+            <div class="docket">
+              <h2 id="gallery-title">One prompt. Five interpretations.</h2>
+              <p id="galleryPromptLead" class="docket__lead">
+                Choose a prompt and compare composition, light, detail, and typography.
+              </p>
+              <p class="docket__support">
+                Move the inspection point to examine the same position in every image.
+              </p>
+            </div>
+
+            <div class="prompt-switcher" role="tablist" aria-label="Gallery prompts">
+              <button type="button" class="prompt-tab is-active" role="tab" aria-selected="true" data-prompt-index="0">
+                Prompt 1
+              </button>
+              <button type="button" class="prompt-tab" role="tab" aria-selected="false" data-prompt-index="1">
+                Prompt 2
+              </button>
+              <button type="button" class="prompt-tab" role="tab" aria-selected="false" data-prompt-index="2">
+                Prompt 3
+              </button>
+            </div>
+
+            <div class="proof-note" aria-label="Gallery note">
+              <span class="proof-note__text">Default model settings · AI-generated demonstration output.</span>
+            </div>
+          </div>
+
+          <div class="gallery-state" id="galleryState" aria-live="polite"></div>
+
+          <div class="gallery-empty" id="galleryEmpty" hidden>
+            <strong>No gallery images yet.</strong>
+            <p>Load the gallery to see the five-model comparison.</p>
+          </div>
+
+          <div class="gallery-error" id="galleryError" hidden role="alert"></div>
+
+          <div
+            class="comparison-rail"
+            id="comparisonRail"
+            tabindex="0"
+            aria-label="Five-model comparison rail"
+            aria-describedby="comparisonHint"
+          >
+            <p class="comparison-hint" id="comparisonHint">
+              Use the pointer or arrow keys to move the inspection point. The same position applies
+              to every proof plate.
+            </p>
+            <div class="proof-grid" id="proofGrid" aria-live="off"></div>
+          </div>
+        </section>
+
+        <section
+          id="playground-panel"
+          class="panel panel--playground"
+          aria-labelledby="playground-title"
+          hidden
+        >
+          <div class="panel__head panel__head--playground">
+            <div class="docket">
+              <h2 id="playground-title">Generate your own image.</h2>
+              <p class="docket__lead">
+                Select a model and describe the result. Add a reference image when the model reports
+                image-input support.
+              </p>
+              <p class="docket__support">
+                Default model settings only. Nothing is kept after this browser session.
+              </p>
+            </div>
+
+            <div class="proof-note">
+              <span class="proof-note__text">Private session · Starting a new session removes every prompt, upload, and result.</span>
+            </div>
+          </div>
+
+          <div class="workbench">
+            <form class="workbench__controls" id="playgroundForm" novalidate>
+              <label class="field field--model">
+                <span class="field__label">Model</span>
+                <span class="select-shell">
+                  <select
+                    id="modelSelect"
+                    class="field__control field__control--select"
+                    aria-describedby="capabilityCard"
+                  ></select>
+                </span>
+              </label>
+
+              <div class="capability-card" id="capabilityCard" aria-live="polite"></div>
+
+              <label class="field">
+                <span class="field__label">Prompt</span>
+                <textarea
+                  id="promptInput"
+                  class="field__control field__control--textarea"
+                  rows="8"
+                  aria-describedby="promptHint"
+                  placeholder="Example: A quiet coastal observatory at sunrise, soft haze, medium-format film, and precise architectural detail."
+                ></textarea>
+                <span class="field__hint" id="promptHint">
+                  Describe the subject, composition, light, material, and mood.
+                </span>
+              </label>
+
+              <div class="upload-card" id="uploadCard">
+                <div class="upload-card__head">
+                  <span class="field__label">Optional image</span>
+                  <span class="upload-card__note" id="uploadNote">Checking image input support…</span>
+                </div>
+                <div class="upload-card__body">
+                  <div class="upload-dropzone" id="uploadDropzone">
+                    <input
+                      id="imageInput"
+                      class="sr-only upload-input"
+                      type="file"
+                      tabindex="-1"
+                      accept="image/png,image/jpeg"
+                    />
+                    <div class="upload-dropzone__visual" aria-hidden="true">
+                      <svg viewBox="0 0 48 48">
+                        <rect x="8.5" y="10.5" width="31" height="27" rx="1.5"></rect>
+                        <circle cx="30.5" cy="19.5" r="3"></circle>
+                        <path d="m13 33 8.5-8.5 5.5 5.5 3.5-3.5L36 33"></path>
+                      </svg>
+                    </div>
+                    <div class="upload-dropzone__copy">
+                      <span class="upload-dropzone__title">Add a reference image</span>
+                      <span class="upload-dropzone__text" id="uploadDropzoneText">
+                        Add a PNG or JPEG only when the selected model supports image input.
+                      </span>
+                      <button type="button" class="upload-dropzone__action" id="chooseImageButton">
+                        Choose image
+                      </button>
+                    </div>
+                  </div>
+                  <div class="upload-preview" id="uploadPreview" hidden>
+                    <div class="media-frame" id="uploadPreviewFrame"></div>
+                    <button type="button" class="subtle-button" id="clearUploadButton">Remove image</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button type="submit" class="primary-button" id="generateButton">Generate</button>
+                <button type="button" class="danger-button" id="resetButton">
+                  Start new session
+                </button>
+              </div>
+              <p class="action-note" id="resetNote">
+                This clears the current prompt, upload, and generated results from this browser only.
+              </p>
+            </form>
+
+            <section class="workbench__output" aria-labelledby="result-history-title">
+              <div class="result-state" id="resultState" aria-live="polite"></div>
+              <div class="result-preview" id="resultPreview" hidden>
+                <h3 id="result-history-title">Latest result</h3>
+                <figure class="result-preview__figure">
+                  <div class="media-frame" id="resultPreviewFrame"></div>
+                  <figcaption id="resultPreviewCaption"></figcaption>
+                </figure>
+              </div>
+              <ol class="result-history" id="resultHistory"></ol>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <div class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "prompts": [
+    {
+      "id": "precise-typography-packaging",
+      "label": "Precise typography and packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact."
+    },
+    {
+      "id": "photorealistic-people-materials",
+      "label": "Photorealistic people and materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting."
+    },
+    {
+      "id": "imaginative-spatial-composition",
+      "label": "Imaginative spatial composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic."
+    }
+  ],
+  "results": [
+    {
+      "promptId": "imaginative-spatial-composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic.",
+      "label": "Imaginative spatial composition",
+      "model": "MAI-Image-2.5",
+      "file": "imaginative-spatial-composition/mai-image-2-5.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "imaginative-spatial-composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic.",
+      "label": "Imaginative spatial composition",
+      "model": "MAI-Image-2.6",
+      "file": "imaginative-spatial-composition/mai-image-2-6.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "imaginative-spatial-composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic.",
+      "label": "Imaginative spatial composition",
+      "model": "MAI-Image-2.6-Flash",
+      "file": "imaginative-spatial-composition/mai-image-2-6-flash.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "imaginative-spatial-composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic.",
+      "label": "Imaginative spatial composition",
+      "model": "gpt-image-2",
+      "file": "imaginative-spatial-composition/gpt-image-2.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1536",
+        "background": "opaque",
+        "quality": "medium"
+      }
+    },
+    {
+      "promptId": "imaginative-spatial-composition",
+      "prompt": "An imaginative architectural composition in a vast zero-gravity atrium, with layered depth, floating forms, elegant perspective shifts, luminous materials, and a strong sense of spatial scale without becoming chaotic.",
+      "label": "Imaginative spatial composition",
+      "model": "gpt-image-2.5-sunburst",
+      "file": "imaginative-spatial-composition/gpt-image-2-5-sunburst.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1536x1024",
+        "background": "opaque",
+        "quality": "high"
+      }
+    },
+    {
+      "promptId": "photorealistic-people-materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting.",
+      "label": "Photorealistic people and materials",
+      "model": "MAI-Image-2.5",
+      "file": "photorealistic-people-materials/mai-image-2-5.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "photorealistic-people-materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting.",
+      "label": "Photorealistic people and materials",
+      "model": "MAI-Image-2.6",
+      "file": "photorealistic-people-materials/mai-image-2-6.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "photorealistic-people-materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting.",
+      "label": "Photorealistic people and materials",
+      "model": "MAI-Image-2.6-Flash",
+      "file": "photorealistic-people-materials/mai-image-2-6-flash.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "photorealistic-people-materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting.",
+      "label": "Photorealistic people and materials",
+      "model": "gpt-image-2",
+      "file": "photorealistic-people-materials/gpt-image-2.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1536x1024",
+        "background": "opaque",
+        "quality": "medium"
+      }
+    },
+    {
+      "promptId": "photorealistic-people-materials",
+      "prompt": "Photorealistic portrait scene of two coworkers in a daylight workshop, showing natural skin detail, believable hand poses, brushed metal, matte plastic, wool fabric, glass reflections, and subtle mixed lighting.",
+      "label": "Photorealistic people and materials",
+      "model": "gpt-image-2.5-sunburst",
+      "file": "photorealistic-people-materials/gpt-image-2-5-sunburst.png",
+      "status": "generated",
+      "metadata": {
+        "quality": "high",
+        "background": "opaque",
+        "size": "1536x1024"
+      }
+    },
+    {
+      "promptId": "precise-typography-packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact.",
+      "label": "Precise typography and packaging",
+      "model": "MAI-Image-2.5",
+      "file": "precise-typography-packaging/mai-image-2-5.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "precise-typography-packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact.",
+      "label": "Precise typography and packaging",
+      "model": "MAI-Image-2.6",
+      "file": "precise-typography-packaging/mai-image-2-6.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "precise-typography-packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact.",
+      "label": "Precise typography and packaging",
+      "model": "MAI-Image-2.6-Flash",
+      "file": "precise-typography-packaging/mai-image-2-6-flash.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1024x1024"
+      }
+    },
+    {
+      "promptId": "precise-typography-packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact.",
+      "label": "Precise typography and packaging",
+      "model": "gpt-image-2",
+      "file": "precise-typography-packaging/gpt-image-2.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1402x1122",
+        "background": "opaque",
+        "quality": "low"
+      }
+    },
+    {
+      "promptId": "precise-typography-packaging",
+      "prompt": "Create a premium product package on a white studio set, with crisp micro-typography, clean label hierarchy, embossed paper texture, precise edges, accurate shadows, and a restrained editorial layout. The packaging should feel real, manufacturable, and visually exact.",
+      "label": "Precise typography and packaging",
+      "model": "gpt-image-2.5-sunburst",
+      "file": "precise-typography-packaging/gpt-image-2-5-sunburst.png",
+      "status": "generated",
+      "metadata": {
+        "size": "1312x1199",
+        "background": "opaque",
+        "quality": "low"
+      }
+    }
+  ],
+  "status": "complete",
+  "failedCount": 0
+}

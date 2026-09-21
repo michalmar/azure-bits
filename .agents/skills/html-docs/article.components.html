@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article components</title>
+<meta name="description" content="Every component of the html-docs article runtime, with the exact markup each one requires.">
+<meta name="doc-id" content="html-docs-article-components">
+
+<script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+
+<style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+
+<link rel="stylesheet" href="assets/article.css">
+<link rel="stylesheet" href="assets/slides.css">
+<script src="assets/article.js" defer></script>
+<script src="assets/slides.js" defer></script>
+</head>
+
+<body>
+
+<div class="controls" role="group" aria-label="Article controls">
+  <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+  <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+  <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+  <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+  <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+</div>
+
+<div class="doc">
+
+  <header class="doc-header" id="opening">
+    <div class="slide-content slide-content--title">
+      <p class="slide-eyebrow">Article components</p>
+      <h2 class="slide-title">One narrative.<br><em>Two depths.</em></h2>
+      <p class="slide-lead">Concise cues live beside the complete reference.</p>
+    </div>
+    <p class="eyebrow">Reference</p>
+    <h1>Article components</h1>
+    <p class="subtitle">Every component the article runtime styles, with the exact markup it expects. Copy from here rather than inventing structure.</p>
+    <p class="meta">Component reference; all scenarios are illustrative.</p>
+  </header>
+
+  <nav class="doc-nav" aria-label="Related material">
+    <a href="article.template.html">Blank article template</a>
+    <a href="deck.components.html">Deck components</a>
+  </nav>
+
+  <nav class="toc" aria-label="Contents">
+    <p class="toc-label">Contents</p>
+    <ol>
+      <li><a href="#ch-structure">Structure</a></li>
+      <li><a href="#ch-alternatives">Alternatives and detail</a></li>
+      <li><a href="#ch-shape">Shaped content</a></li>
+      <li><a href="#ch-evidence">Evidence</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section class="chapter" id="ch-structure">
+      <h2 class="chapter-label">Structure</h2>
+
+      <article class="card card--lead" id="card-how-to-read" data-open>
+        <div class="slide-content">
+          <h2 class="slide-title">Present the idea.<br><em>Keep the reasoning.</em></h2>
+          <p class="slide-lead">Slides and reading share structure, not density.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="true">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">How to read this page</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <p>This is a lead card. It carries <code>card--lead</code>, so it is not numbered and never renders <code>00</code>. It is the only card open on load.</p>
+          <p>Every other card below demonstrates one component. Open a card, then read its markup in the source.</p>
+        </div>
+      </article>
+
+      <article class="card" id="card-card">
+        <div class="slide-content">
+          <h2 class="slide-title">One card.<br><em>One point.</em></h2>
+          <p class="slide-lead">A short authored cue, not a compressed paragraph.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Card</span>
+              <span class="card-sub">The fundamental unit: one card is one major idea.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <p>The header is a real button with <code>aria-expanded</code>. The number is generated by a CSS counter, so inserting a card never renumbers by hand.</p>
+          <p>The second header line is a subtitle. Use it when the title alone does not make a collapsed card understandable.</p>
+        </div>
+      </article>
+
+      <article class="card" id="card-reveal">
+        <div class="slide-content">
+          <h2 class="slide-title">Details belong<br><em>in reading mode.</em></h2>
+          <p class="slide-lead">No reveal buttons on the projected slide.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Reveal</span>
+              <span class="card-sub">Optional depth inside a card.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <p>Use a reveal for troubleshooting, evidence, derivations, and side arguments. The content stays inline in the HTML, so it prints and searches.</p>
+
+          <div class="reveal">
+            <button type="button" class="reveal-toggle" aria-expanded="false">Show the failure path</button>
+            <div class="reveal-body">
+              <p>Reveal body text stays at normal reading size. Optional does not mean fine print.</p>
+              <ul class="arrow-list">
+                <li>Check the resource provider registration first.</li>
+                <li>Then confirm the role assignment has propagated.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="reveal">
+            <button type="button" class="reveal-toggle" aria-expanded="false">Show a second reveal</button>
+            <div class="reveal-body">
+              <p>Reveals are independent of each other and of the card.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="chapter" id="ch-alternatives">
+      <h2 class="chapter-label">Alternatives and detail</h2>
+
+      <article class="card" id="card-tabs">
+        <div class="slide-content">
+          <h2 class="slide-title">Choose a path.<br><em>Do not project tabs.</em></h2>
+          <ul class="slide-points"><li class="frag">Readers can compare alternatives.</li><li class="frag">Presenters need one clear argument.</li></ul>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Tabs</span>
+              <span class="card-sub">Only for true alternatives: two ways to do the same thing.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <div class="tabs">
+            <div class="tablist" role="tablist" aria-label="Ways to create the resource">
+              <button type="button" role="tab" id="tab-portal" aria-controls="panel-portal" aria-selected="true">Portal</button>
+              <button type="button" role="tab" id="tab-cli" aria-controls="panel-cli" aria-selected="false" tabindex="-1">CLI</button>
+              <button type="button" role="tab" id="tab-sdk" aria-controls="panel-sdk" aria-selected="false" tabindex="-1">SDK</button>
+            </div>
+            <div class="tabpanel" role="tabpanel" id="panel-portal" aria-labelledby="tab-portal" data-tab-label="Portal">
+              <p>Open the resource blade, select <strong>Create</strong>, and complete the basics tab.</p>
+            </div>
+            <div class="tabpanel" role="tabpanel" id="panel-cli" aria-labelledby="tab-cli" data-tab-label="CLI" hidden>
+              <div class="code">
+                <p class="code-label">bash</p>
+                <pre><code>az group create --name rg-demo --location westeurope</code></pre>
+              </div>
+            </div>
+            <div class="tabpanel" role="tabpanel" id="panel-sdk" aria-labelledby="tab-sdk" data-tab-label="SDK" hidden>
+              <p>Call the management client and await the long-running operation.</p>
+            </div>
+          </div>
+          <p>Without JavaScript, the tab strip is hidden and every panel is shown stacked with its label, so nothing is lost.</p>
+        </div>
+      </article>
+
+      <article class="card" id="card-detail-grid">
+        <div class="slide-content">
+          <h2 class="slide-title">Project the verdict,<br><em>not the dialog.</em></h2>
+          <p class="slide-lead">Keep the full comparison next to its claim.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Detail grid</span>
+              <span class="card-sub">Two or four tiles, each with a short summary and a longer detail.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-tile">
+              <button type="button" class="detail-open">
+                <span class="detail-title">Cost</span>
+                <span class="detail-summary">Predictable at steady state, spiky during migration.</span>
+                <span class="detail-more" aria-hidden="true">Details</span>
+              </button>
+              <div class="detail-body">
+                <p>Migration doubles the running footprint for the cutover window. Budget for the overlap rather than the end state.</p>
+              </div>
+            </div>
+            <div class="detail-tile">
+              <button type="button" class="detail-open">
+                <span class="detail-title">Operations</span>
+                <span class="detail-summary">Fewer moving parts, different failure modes.</span>
+                <span class="detail-more" aria-hidden="true">Details</span>
+              </button>
+              <div class="detail-body">
+                <p>The platform absorbs patching and node health. In exchange, diagnosis moves from the host to the platform log surface.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="chapter" id="ch-shape">
+      <h2 class="chapter-label">Shaped content</h2>
+
+      <article class="card" id="card-sequence">
+        <div class="slide-content">
+          <h2 class="slide-title">Order carries meaning.</h2>
+          <ul class="slide-points"><li class="frag">Prepare.</li><li class="frag">Act.</li><li class="frag">Verify.</li></ul>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Sequence and steps</span>
+              <span class="card-sub">An ordered evolution, and a lifecycle to execute.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <h4>Sequence</h4>
+          <ol class="sequence">
+            <li><span class="seq-title">Virtual machines</span><span class="seq-note">Full control, full responsibility.</span></li>
+            <li><span class="seq-title">Containers</span><span class="seq-note">Portable units, orchestrated.</span></li>
+            <li><span class="seq-title">Managed platform</span><span class="seq-note">Operations absorbed.</span></li>
+          </ol>
+
+          <h4>Steps</h4>
+          <ol class="steps">
+            <li>
+              <h4>Provision</h4>
+              <p>Create the resource group and the workload identity.</p>
+            </li>
+            <li>
+              <h4>Deploy</h4>
+              <p>Push the image and roll out the first revision.</p>
+            </li>
+            <li>
+              <h4>Verify</h4>
+              <p>Confirm the health probe returns 200 before shifting traffic.</p>
+            </li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="card" id="card-lists">
+        <div class="slide-content">
+          <h2 class="slide-title">Keep the synthesis short.</h2>
+          <ul class="slide-points"><li class="frag">Name the constraint.</li><li class="frag">Choose the tradeoff.</li><li class="frag">State the next action.</li></ul>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Summary grid and arrow list</span>
+              <span class="card-sub">Final synthesis, and practical next actions.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Latency</span>
+              <p>Median request time drops once the cold start is removed.</p>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Cost</span>
+              <p>Steady state is cheaper; the migration window is not.</p>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Risk</span>
+              <p>The rollback path must be rehearsed before the cutover.</p>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Effort</span>
+              <p>Most of the work is in configuration, not in code.</p>
+            </div>
+          </div>
+
+          <h4>Next actions</h4>
+          <ul class="arrow-list">
+            <li>Run the readiness assessment against the staging subscription.</li>
+            <li>Record the current baseline latency before changing anything.</li>
+            <li>Agree the rollback trigger with the service owner.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="card" id="card-callouts">
+        <div class="slide-content">
+          <h2 class="slide-title">Meaning comes from labels,<br><em>not extra colors.</em></h2>
+          <p class="slide-lead">One accent, including warnings.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Callouts</span>
+              <span class="card-sub">A fixed set of six meanings. Use them sparingly.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <aside class="callout callout--note">
+            <p class="callout-label">Note</p>
+            <p>Side information worth surfacing.</p>
+          </aside>
+          <aside class="callout callout--rule">
+            <p class="callout-label">Rule</p>
+            <p>A durable rule to remember.</p>
+          </aside>
+          <aside class="callout callout--warning">
+            <p class="callout-label">Warning</p>
+            <p>A practical risk, or a way to break something.</p>
+          </aside>
+          <aside class="callout callout--verdict">
+            <p class="callout-label">Verdict</p>
+            <p>A conclusion.</p>
+          </aside>
+          <aside class="callout callout--source">
+            <p class="callout-label">Source</p>
+            <p>Provenance of a claim, with a date or a version.</p>
+          </aside>
+          <aside class="callout callout--author">
+            <p class="callout-label">Author</p>
+            <p>A personal viewpoint, marked as one.</p>
+          </aside>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="chapter" id="ch-evidence">
+      <h2 class="chapter-label">Evidence</h2>
+
+      <article class="card" id="card-code">
+        <div class="slide-content">
+          <h2 class="slide-title">Explain the mechanism.<br><em>Keep the full code below.</em></h2>
+          <p class="slide-lead">The reference carries what the screen should not.</p>
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Code and tables</span>
+              <span class="card-sub">Commands, transcripts, and small comparisons.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <div class="code">
+            <p class="code-label">infra/main.bicep</p>
+            <pre><code>resource app 'Microsoft.App/containerApps@2024-03-01' = {
+  name: appName
+  location: location
+  properties: {
+    managedEnvironmentId: environment.id
+    configuration: { ingress: { external: true, targetPort: 8080 } }
+  }
+}</code></pre>
+          </div>
+
+          <div class="code">
+            <pre><code>$ az containerapp show --name demo --query properties.runningStatus --output tsv
+Running</code></pre>
+          </div>
+
+          <table>
+            <thead>
+              <tr><th>Option</th><th>Control</th><th>Operational load</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Virtual machines</td><td>Full</td><td>High</td></tr>
+              <tr><td>Container apps</td><td>Application level</td><td>Low</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card" id="card-figure">
+        <div class="slide-content">
+          <h2 class="slide-title">Give the diagram space.</h2>
+          <img src="assets/sample-diagram.svg" alt="Source feeds processing, which writes to a sink." width="960" height="240">
+        </div>
+        <h3 class="card-head">
+          <button type="button" class="card-toggle" aria-expanded="false">
+            <span class="card-num" aria-hidden="true"></span>
+            <span class="card-titles">
+              <span class="card-title">Figures</span>
+              <span class="card-sub">Screenshots and diagrams, zoomable in place.</span>
+            </span>
+            <span class="card-mark" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div class="card-body">
+          <figure class="figure">
+            <a class="zoom" href="assets/sample-diagram.svg">
+              <img src="assets/sample-diagram.svg" alt="Source feeds a processing stage, which writes to a sink." loading="lazy" width="960" height="240">
+            </a>
+            <figcaption>Data path from source through processing to sink. Click to zoom.</figcaption>
+          </figure>
+
+          <div class="reveal">
+            <button type="button" class="reveal-toggle" aria-expanded="false">Show the screenshot evidence</button>
+            <div class="reveal-body">
+              <p>Screenshot-heavy evidence belongs in a reveal so the main article stays readable.</p>
+              <figure class="figure">
+                <a class="zoom" href="assets/sample-diagram.svg">
+                  <img src="assets/sample-diagram.svg" alt="The same diagram, used here as a stand-in for a portal screenshot." loading="lazy" width="960" height="240">
+                </a>
+                <figcaption>Placeholder standing in for a portal screenshot.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <section class="takeaway" id="closing">
+    <p>Reuse the component structures; author the presentation cues intentionally.</p>
+    <div class="slide-content slide-content--end">
+      <p class="slide-eyebrow">The key message</p>
+      <h2 class="slide-title">Less on screen.<br><em>More to return to.</em></h2>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <a href="article.template.html">Blank article template</a>
+    <a href="deck.components.html">Deck components</a>
+  </footer>
+
+</div>
+
+</body>
+</html>
