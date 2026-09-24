@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Speech live interpreter</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23111315'/%3E%3Cpath d='M5 16h4l2-7 3 14 3-18 3 20 3-12 2 6 2-3h2' fill='none' stroke='%236fd3e8' stroke-width='2'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/static/tokens.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="masthead">
+        <a class="product-mark" href="/" aria-label="Speech live interpreter home">
+          <span class="product-mark__family">Microsoft Foundry</span>
+          <span class="product-mark__divider" aria-hidden="true"></span>
+          <span>Speech live interpreter</span>
+        </a>
+        <span class="masthead__signal">Open-range language detection</span>
+        <div class="masthead__actions">
+          <span class="user-name" id="userName" hidden></span>
+          <a class="github-link" href="https://github.com/michalmar/azure-bits" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="page-head" aria-labelledby="page-title">
+          <div>
+            <h1 id="page-title">Speak naturally. Hear the translation.</h1>
+            <p class="lead">
+              Stream microphone audio to Azure Speech Live Interpreter, detect the spoken language,
+              and follow source and translated text as the conversation develops.
+            </p>
+            <p class="support">
+              Translated speech plays as it arrives. A downloadable WAV becomes available when you stop.
+            </p>
+          </div>
+          <aside class="service-note">
+            <strong>Live Interpreter</strong>
+            Uses the universal v2 endpoint, managed identity in Azure, and no Speech keys in the browser or container.
+          </aside>
+        </section>
+
+        <section class="workbench" aria-label="Live interpreter workbench">
+          <form class="controls" id="controls">
+            <label class="field">
+              <span class="field__label">Translate into</span>
+              <select class="control" id="targetLanguage">
+                <option value="fr">French</option>
+                <option value="en">English</option>
+                <option value="cs">Czech</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="it">Italian</option>
+              </select>
+              <span class="field__hint">The spoken language is detected automatically.</span>
+            </label>
+
+            <fieldset class="voice-options">
+              <legend class="field__label">Voice</legend>
+              <label class="voice-choice">
+                <input type="radio" name="voiceMode" value="prebuilt" checked />
+                <span>Microsoft prebuilt voice</span>
+              </label>
+              <label class="voice-choice" id="personalVoiceChoice" hidden>
+                <input type="radio" name="voiceMode" value="personal-voice" />
+                <span>Personal Voice</span>
+              </label>
+            </fieldset>
+
+            <div class="action-row">
+              <button class="primary-button" id="sessionButton" type="submit">Start interpreting</button>
+              <button class="secondary-button" id="clearButton" type="button" disabled>Clear conversation</button>
+            </div>
+            <p class="status" id="status" aria-live="polite">Ready for microphone access.</p>
+          </form>
+
+          <div class="conversation">
+            <div class="conversation__head" aria-hidden="true">
+              <span>What was said</span>
+              <span>Translation</span>
+            </div>
+            <div class="tape" id="tape">
+              <div class="empty-state" id="emptyState">
+                <div>
+                  <svg viewBox="0 0 120 80" aria-hidden="true">
+                    <path d="M8 39h12l5-18 8 43 8-53 8 57 8-38 8 19 8-10h39"></path>
+                  </svg>
+                  <strong>Your conversation will appear here.</strong>
+                  <p>Start interpreting, then speak into this device.</p>
+                </div>
+              </div>
+              <div class="utterances" id="utterances"></div>
+              <div class="interim" id="interim" hidden>
+                <p id="interimSource"></p>
+                <p id="interimTranslation"></p>
+              </div>
+            </div>
+            <div class="audio-result" id="audioResult" hidden>
+              <div>
+                <strong>Translated audio</strong>
+                <span>16 kHz mono WAV</span>
+              </div>
+              <audio id="audioPlayer" controls></audio>
+              <a class="download-link" id="downloadLink" download="translated.wav">Download WAV</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

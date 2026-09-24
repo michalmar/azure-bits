@@ -1,0 +1,14 @@
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+speech_resource_id  = "/subscriptions/.../resourceGroups/.../providers/Microsoft.CognitiveServices/accounts/..."
+speech_resource_name = "approved-speech-resource"
+deployer_principal_id = "00000000-0000-0000-0000-000000000000"
+
+# Add these only after building the image and configuring Entra + Key Vault.
+# container_image          = "registry.azurecr.io/foundry-speech-interpreter@sha256:..."
+# entra_tenant_id          = "00000000-0000-0000-0000-000000000000"
+# entra_client_id          = "00000000-0000-0000-0000-000000000000"
+# entra_client_secret_uri  = "https://vault.vault.azure.net/secrets/interpreter-entra/<version>"
+# session_secret_uri       = "https://vault.vault.azure.net/secrets/interpreter-session/<version>"
+# allowed_users            = "tenant:*"
+# public_base_url          = "https://actual-name.azurecontainerapps.io"
+# personal_voice_enabled   = false

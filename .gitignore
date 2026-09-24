@@ -6,9 +6,9 @@ __pycache__/
 .coverage
 htmlcov/
 
-infra/**/.terraform/
-infra/**/*.tfstate
-infra/**/*.tfstate.*
-infra/**/*.tfplan
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
 
 .DS_Store
