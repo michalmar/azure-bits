@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GPT-Live conversation | Microsoft Foundry</title>
+    <link rel="stylesheet" href="/static/tokens.css" />
+    <link rel="stylesheet" href="/static/baseline.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="demo-brand" href="/" aria-label="GPT-Live demo home">
+          <span class="demo-brand__family">Microsoft Foundry</span>
+          <span class="demo-brand__divider" aria-hidden="true"></span>
+          <span>GPT-Live</span>
+        </a>
+        <div class="demo-header__actions">
+          <span class="reader-name" id="readerName" hidden></span>
+          <a class="header-link" id="logoutLink" href="/logout" hidden>Log out</a>
+          <a class="header-link" href="https://github.com/michalmar/azure-bits" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </header>
+
+      <main class="demo-main">
+        <div class="demo-page-head">
+          <div>
+            <h1>Talk while it talks.</h1>
+            <p class="demo-lead">
+              Have a real-time voice conversation with GPT-Live. Speak again while it answers
+              to change direction without waiting for a turn to end.
+            </p>
+            <p class="demo-support">
+              Headphones help prevent the microphone from hearing the model's voice.
+              No tools or image generation are connected in this demo.
+            </p>
+          </div>
+        </div>
+
+        <div class="session-strip" aria-label="Session information">
+          <p class="session-strip__status" id="status" role="status" aria-live="polite">
+            Checking the connection…
+          </p>
+          <p class="session-strip__time">
+            <span>Time remaining</span>
+            <output id="remaining" aria-label="Time remaining">05:00</output>
+            <span class="session-strip__limit">/ 5 minutes per conversation</span>
+          </p>
+        </div>
+
+        <div class="demo-workbench">
+          <section class="demo-workbench__controls" aria-label="Conversation controls">
+            <div class="session-detail">
+              <span class="demo-field__label">Model</span>
+              <strong id="modelName">gpt-live-1</strong>
+              <span class="demo-field__hint">Voice: marin · Full-duplex audio</span>
+            </div>
+
+            <div class="signal" aria-label="Your microphone level">
+              <div class="signal__head">
+                <span>Your microphone</span>
+                <span id="micState">Off</span>
+              </div>
+              <div class="signal__track" aria-hidden="true"><span id="micLevel"></span></div>
+            </div>
+
+            <div class="demo-actions">
+              <button type="button" class="demo-button demo-button--primary" id="sessionButton" disabled>
+                Start conversation
+              </button>
+              <button type="button" class="demo-button demo-button--secondary" id="muteButton" disabled>
+                Mute microphone
+              </button>
+            </div>
+            <p class="demo-field__hint controls-hint">
+              Microphone access begins only when you select Start conversation. Audio is streamed
+              while the session is open, including when the model speaks.
+            </p>
+          </section>
+
+          <section class="demo-workbench__output" aria-labelledby="conversationHeading">
+            <div class="conversation-heading">
+              <div>
+                <h2 id="conversationHeading">Conversation</h2>
+                <p>Live transcript fragments can interleave; they are not guaranteed to be complete turns.</p>
+              </div>
+              <button type="button" class="text-button" id="clearButton" disabled>Clear transcript</button>
+            </div>
+
+            <div class="signal signal--assistant" aria-label="Model voice level">
+              <div class="signal__head">
+                <span>Model voice</span>
+                <span id="modelState">Off</span>
+              </div>
+              <div class="signal__track" aria-hidden="true"><span id="modelLevel"></span></div>
+            </div>
+
+            <div class="transcript" id="transcriptRegion">
+              <div class="demo-empty transcript__empty" id="emptyState">
+                <div>
+                  <svg class="empty-wave" viewBox="0 0 144 48" aria-hidden="true">
+                    <path d="M2 24h20l7-10 8 22 9-33 9 43 9-26 8 10 8-6h64"></path>
+                  </svg>
+                  <strong>The conversation will appear here.</strong>
+                  <p>Start a conversation and speak into this device.</p>
+                </div>
+              </div>
+              <ol class="transcript__list" id="transcriptList" aria-label="Live transcript"></ol>
+            </div>
+          </section>
+        </div>
+
+        <p class="privacy-note">
+          The transcript stays in this tab only. The server does not store conversation audio or text.
+          <a href="https://learn.microsoft.com/azure/foundry/openai/how-to/gpt-live" target="_blank" rel="noopener noreferrer">How GPT-Live works</a>
+        </p>
+      </main>
+    </div>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>
