@@ -9,10 +9,7 @@ frontend, tests, infrastructure, and detailed setup instructions.
 | Demo | Description | Frontend | Run and deploy |
 | --- | --- | --- | --- |
 | [Foundry image models](foundry-image-models/) | Customer-ready gallery and playground for comparing five Foundry image models. Supports prompt-only generation and image editing when the selected model exposes image-input capability. | [Live demo](https://foundry-image-models-demo.calmrock-baf930f6.swedencentral.azurecontainerapps.io) · [Frontend source](foundry-image-models/static/) | [Local setup](foundry-image-models/README.md#local-setup) · [Deploy to Azure](foundry-image-models/README.md#deploy-to-azure) |
-| [Azure Speech Live Interpreter](foundry-speech-live-interpreter/) | Browser and CLI demo for real-time speech translation with open-range language detection and synthesized translated audio. | [Frontend source](foundry-speech-live-interpreter/static/) · Local frontend: <http://127.0.0.1:8000> after startup | [Local setup](foundry-speech-live-interpreter/README.md#configure-and-run-locally) · [Infrastructure and deployment](foundry-speech-live-interpreter/README.md#infrastructure) |
-
-The Speech Live Interpreter repository state does not currently record a
-deployed Container App, so no public frontend URL is listed.
+| [Azure Speech Live Interpreter](foundry-speech-live-interpreter/) | Browser and CLI demo for real-time speech translation with automatic open-range input-language detection and live synthesized translated audio. Personal Voice is shown only when Limited Access approval is verified and enabled on the configured Speech resource. | [Live demo](https://foundry-speech-interpreter.calmmeadow-e5324689.swedencentral.azurecontainerapps.io) · [Frontend source](foundry-speech-live-interpreter/static/) | [Local setup](foundry-speech-live-interpreter/README.md#configure-and-run-locally) · [Infrastructure and deployment](foundry-speech-live-interpreter/README.md#infrastructure) |
 
 ## Common Azure setup
 
