@@ -1,0 +1,338 @@
+{
+  "title": "Two labs. Two years.",
+  "subtitle": "OpenAI and Anthropic model releases, October 2024 to September 2026",
+  "window": { "start": "2024-10-01", "end": "2026-09-30" },
+  "asOf": "2026-10-01",
+  "labs": {
+    "openai": {
+      "name": "OpenAI",
+      "eras": [
+        { "label": "o-series reasoning", "start": "2024-10-01", "end": "2025-08-06" },
+        { "label": "GPT-5 family", "start": "2025-08-07", "end": "2026-09-02" },
+        { "label": "GPT-6 family", "start": "2026-09-03", "end": "2026-09-30" }
+      ]
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "eras": [
+        { "label": "Claude 3.5 and 3.7", "start": "2024-10-01", "end": "2025-05-21" },
+        { "label": "Claude 4 family", "start": "2025-05-22", "end": "2026-06-08" },
+        { "label": "Claude 5 family", "start": "2026-06-09", "end": "2026-09-30" }
+      ]
+    }
+  },
+  "releases": [
+    {
+      "lab": "anthropic",
+      "date": "2024-10-22",
+      "name": "Claude 3.5 Sonnet (new) + 3.5 Haiku",
+      "note": "Computer use enters public beta",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2024-12-05",
+      "name": "o1 + o1 pro mode",
+      "note": "Reasoning leaves preview",
+      "major": true,
+      "source": "https://en.wikipedia.org/wiki/OpenAI_o1"
+    },
+    {
+      "lab": "openai",
+      "date": "2024-12-09",
+      "name": "Sora",
+      "note": "Text-to-video for ChatGPT users",
+      "major": false,
+      "source": "https://openai.com/index/sora-is-here/"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-01-31",
+      "name": "o3-mini",
+      "note": "Cost-efficient STEM reasoning",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-02-24",
+      "name": "Claude 3.7 Sonnet",
+      "note": "Hybrid reasoning; Claude Code preview",
+      "major": true,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-02-27",
+      "name": "GPT-4.5",
+      "note": "Largest chat model research preview",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-03-25",
+      "name": "GPT-4o image generation",
+      "note": "Native images in ChatGPT",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-04-14",
+      "name": "GPT-4.1",
+      "note": "API family for coding and long context",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-04-16",
+      "name": "o3 + o4-mini",
+      "note": "Reasoning with full tool use",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-05-22",
+      "name": "Claude Opus 4 + Sonnet 4",
+      "note": "Claude 4 generation for agents",
+      "major": true,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-06-10",
+      "name": "o3-pro",
+      "note": "Longest-thinking o3 variant",
+      "major": false,
+      "source": "https://aiwiki.ai/wiki/o3"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-08-05",
+      "name": "gpt-oss-120b + 20b",
+      "note": "First open weights since GPT-2",
+      "major": false,
+      "source": "https://openai.com/index/introducing-gpt-oss/"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-08-05",
+      "name": "Claude Opus 4.1",
+      "note": "Sharper coding and agentic work",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-08-07",
+      "name": "GPT-5",
+      "note": "One unified system for ChatGPT and API",
+      "major": true,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-09-29",
+      "name": "Claude Sonnet 4.5",
+      "note": "Agents, coding, and computer use",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-09-30",
+      "name": "Sora 2",
+      "note": "Video with synchronized audio",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-10-15",
+      "name": "Claude Haiku 4.5",
+      "note": "Fast, low-cost 4.5 model",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-11-12",
+      "name": "GPT-5.1",
+      "note": "Instant and Thinking in ChatGPT",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2025-11-24",
+      "name": "Claude Opus 4.5",
+      "note": "Coding, agents, and spreadsheets",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2025-12-11",
+      "name": "GPT-5.2",
+      "note": "Professional work and long agents",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-02-05",
+      "name": "GPT-5.3-Codex",
+      "note": "Agentic coding model",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-02-05",
+      "name": "Claude Opus 4.6",
+      "note": "1M-token context in beta",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-02-17",
+      "name": "Claude Sonnet 4.6",
+      "note": "Coding, computer use, and design",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-03-05",
+      "name": "GPT-5.4",
+      "note": "Reasoning, coding, and tool use",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-04-07",
+      "name": "Claude Mythos Preview",
+      "note": "Restricted; Project Glasswing",
+      "major": false,
+      "source": "https://www.anthropic.com/glasswing"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-04-16",
+      "name": "Claude Opus 4.7",
+      "note": "High-resolution vision",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-04-23",
+      "name": "GPT-5.5",
+      "note": "Research, computer use, documents",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-05-28",
+      "name": "Claude Opus 4.8",
+      "note": "Reliable long-running collaboration",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-06-09",
+      "name": "Claude Fable 5 + Mythos 5",
+      "note": "Claude 5 generation begins",
+      "major": true,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-06-30",
+      "name": "Claude Sonnet 5",
+      "note": "Agentic coding and tool use",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-07-09",
+      "name": "GPT-5.6 Sol, Terra, Luna",
+      "note": "Three tiers; previewed June 26",
+      "major": false,
+      "source": "https://openai.com/index/gpt-5-6/"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-07-24",
+      "name": "Claude Opus 5",
+      "note": "Adaptive thinking by default",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-08-10",
+      "name": "GPT-5.6-Cyber",
+      "note": "For approved Daybreak Red work",
+      "major": false,
+      "source": "https://github.com/jqueryscript/chatgpt-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-09-01",
+      "name": "Claude Fable 5.1 + Mythos 5.1",
+      "note": "1M context, 128K output",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-09-03",
+      "name": "GPT-6 Astra",
+      "note": "GPT-6 generation begins",
+      "major": true,
+      "source": "https://en.wikipedia.org/wiki/GPT-6"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-09-22",
+      "name": "GPT-6 Sol + Luna",
+      "note": "Faster, lower-cost GPT-6",
+      "major": false,
+      "source": "https://openai.com/index/introducing-gpt-6-sol-and-luna/"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-09-22",
+      "name": "Claude Opus 5.5",
+      "note": "1M context, 40% cheaper than Opus 5",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "anthropic",
+      "date": "2026-09-28",
+      "name": "Claude Sonnet 5.5",
+      "note": "30% faster output than Sonnet 5",
+      "major": false,
+      "source": "https://github.com/jqueryscript/anthropic-claude-timeline"
+    },
+    {
+      "lab": "openai",
+      "date": "2026-09-29",
+      "name": "GPT-6.1 Sol",
+      "note": "Announced at DevDay 2026",
+      "major": false,
+      "source": "https://techcrunch.com/2026/09/29/openai-launches-gpt-6-1-sol-says-it-nearly-matches-gpt-6-astra-and-costs-less/"
+    }
+  ]
+}
