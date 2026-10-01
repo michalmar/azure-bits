@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Timeline renderer</title>
+    <style>
+      html, body { margin: 0; background: #ffffff; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <canvas id="stage" width="1920" height="1080"></canvas>
+    <script type="module">
+      import { createTimeline } from "./timeline.js";
+      const data = await (await fetch("./releases.json")).json();
+      const timeline = createTimeline(document.getElementById("stage"), data);
+      window.timelineDuration = timeline.duration;
+      window.renderFrame = (t) => {
+        timeline.render(t);
+        return document.getElementById("stage").toDataURL("image/png");
+      };
+      window.timelineReady = true;
+    </script>
+  </body>
+</html>
