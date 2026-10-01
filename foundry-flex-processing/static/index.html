@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flex processing race | Microsoft Foundry</title>
+    <link rel="stylesheet" href="/static/tokens.css" />
+    <link rel="stylesheet" href="/static/baseline.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="demo-brand" href="/" aria-label="Flex processing demo home">
+          <span class="demo-brand__family">Microsoft Foundry</span>
+          <span class="demo-brand__divider" aria-hidden="true"></span>
+          <span>Flex processing</span>
+        </a>
+        <nav class="demo-nav" aria-label="Demo views">
+          <button class="demo-nav__item is-active" type="button" data-view-target="playground">Playground</button>
+          <button class="demo-nav__item" type="button" data-view-target="results">Test results</button>
+        </nav>
+        <div class="demo-header__actions">
+          <span class="reader-name" id="readerName" hidden></span>
+          <a id="logoutLink" href="/logout" hidden>Log out</a>
+          <a href="https://github.com/michalmar/azure-bits" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </header>
+
+      <main class="demo-main" id="playgroundView" data-view="playground">
+        <div class="demo-page-head">
+          <h1>Same model. Two queues.</h1>
+          <p class="demo-lead">
+            Send one prompt to GPT-5.6 Sol in parallel through Standard and Flex processing.
+            Compare the full responses, latency phases, token use, and estimated cost.
+          </p>
+          <p class="demo-support">
+            Flex uses the same Global Standard deployment and model quality. It trades predictable
+            latency and availability for a documented 50% token-rate discount.
+          </p>
+        </div>
+
+        <section class="price-tape" aria-label="Pricing used for estimates">
+          <div>
+            <span class="price-tape__label">Pricing source</span>
+            <strong id="pricingSource">Loading Azure Retail Prices…</strong>
+          </div>
+          <div>
+            <span class="price-tape__label">Standard · input / output</span>
+            <strong id="standardPrice">—</strong>
+          </div>
+          <div>
+            <span class="price-tape__label">Flex · input / output</span>
+            <strong id="flexPrice">—</strong>
+          </div>
+          <a id="pricingLink" href="https://azure.microsoft.com/pricing/details/azure-openai/" target="_blank" rel="noopener noreferrer">
+            Verify pricing
+          </a>
+        </section>
+        <p class="pricing-warning" id="pricingWarning" role="status" hidden></p>
+
+        <div class="demo-workbench">
+          <form class="demo-workbench__controls" id="benchmarkForm">
+            <label class="demo-field">
+              <span class="demo-field__label">Prompt</span>
+              <textarea
+                class="demo-control demo-control--textarea"
+                id="prompt"
+                required
+                maxlength="12000"
+              >Explain in practical terms when a software team should choose Flex processing instead of Standard processing. Include one concrete example and one reason not to use Flex.</textarea>
+              <span class="demo-field__hint">
+                Both requests start together and use identical input and output limits.
+              </span>
+            </label>
+
+            <label class="demo-field output-limit">
+              <span class="demo-field__label">Maximum output tokens</span>
+              <input class="demo-control" id="maxOutputTokens" type="number" min="1" max="4096" value="800" required />
+            </label>
+
+            <button class="demo-button demo-button--primary" id="runButton" type="submit" disabled>
+              Run parallel comparison
+            </button>
+            <p class="run-status" id="runStatus" role="status" aria-live="polite">
+              Checking the configured deployment…
+            </p>
+            <p class="demo-field__hint">
+              Each run creates two billable model requests. A single run is a point observation,
+              not a latency SLA or statistically meaningful benchmark.
+            </p>
+          </form>
+
+          <section class="demo-workbench__output" aria-labelledby="resultsHeading">
+            <div class="results-heading">
+              <div>
+                <h2 id="resultsHeading">Parallel result</h2>
+                <p id="resultSummary">Run a prompt to compare both processing paths.</p>
+              </div>
+              <span class="model-name" id="modelName">gpt-5.6-sol</span>
+            </div>
+
+            <div class="race-grid" id="raceGrid">
+              <article class="race-lane" data-tier="standard">
+                <header class="race-lane__header">
+                  <div>
+                    <span class="race-lane__marker" aria-hidden="true">S</span>
+                    <div>
+                      <h3>Standard</h3>
+                      <p>General online processing</p>
+                    </div>
+                  </div>
+                  <strong class="race-lane__total" id="standardTotal">—</strong>
+                </header>
+                <div class="latency-track" id="standardTrack" aria-label="Standard latency phases"></div>
+                <dl class="metric-grid" id="standardMetrics"></dl>
+                <div class="response-copy" id="standardResponse">
+                  <p>Standard response will appear here.</p>
+                </div>
+                <p class="lane-error" id="standardError" hidden></p>
+              </article>
+
+              <article class="race-lane" data-tier="flex">
+                <header class="race-lane__header">
+                  <div>
+                    <span class="race-lane__marker" aria-hidden="true">F</span>
+                    <div>
+                      <h3>Flex</h3>
+                      <p>Discounted, capacity-dependent processing</p>
+                    </div>
+                  </div>
+                  <strong class="race-lane__total" id="flexTotal">—</strong>
+                </header>
+                <div class="latency-track" id="flexTrack" aria-label="Flex latency phases"></div>
+                <dl class="metric-grid" id="flexMetrics"></dl>
+                <div class="response-copy" id="flexResponse">
+                  <p>Flex response will appear here.</p>
+                </div>
+                <p class="lane-error" id="flexError" hidden></p>
+              </article>
+            </div>
+
+            <div class="track-legend" aria-label="Latency phase legend">
+              <span><i data-phase="auth"></i>Authentication</span>
+              <span><i data-phase="headers"></i>Request to headers</span>
+              <span><i data-phase="first"></i>Headers to first token</span>
+              <span><i data-phase="generation"></i>Generation</span>
+            </div>
+          </section>
+        </div>
+
+        <section class="method-note">
+          <h2>What this measures</h2>
+          <p>
+            Timings use the backend's monotonic clock: Entra token acquisition, request-to-response
+            headers, headers-to-first text token, text generation, and total elapsed time. Cost uses
+            the response's regular input, cached input, cache-write, and output token counts against
+            current Global short-context retail meters. Network conditions, connection reuse, shared
+            quota, and temporary Flex capacity all affect an individual run.
+          </p>
+          <a href="https://learn.microsoft.com/azure/foundry/openai/how-to/flex-processing" target="_blank" rel="noopener noreferrer">
+            Read the Flex processing guide
+          </a>
+        </section>
+      </main>
+
+      <main class="demo-main results-view" id="resultsView" data-view="results" hidden>
+        <div class="demo-page-head results-page-head">
+          <h1>Ten runs, not one impression.</h1>
+          <p class="demo-lead">
+            A fixed prompt was sent through Standard and Flex processing ten times. This static
+            result set preserves every run and summarizes the observed distributions.
+          </p>
+          <p class="demo-support" id="resultsMethod">Loading the benchmark dataset…</p>
+        </div>
+
+        <section class="aggregate-grid" id="aggregateGrid" aria-label="Aggregate benchmark results"></section>
+
+        <section class="results-table-section" aria-labelledby="individualRunsHeading">
+          <div class="results-heading">
+            <div>
+              <h2 id="individualRunsHeading">Individual runs</h2>
+              <p>Expand a run to inspect its token use, retries, and both generated responses.</p>
+            </div>
+            <span class="model-name" id="resultsModel">gpt-5.6-sol</span>
+          </div>
+          <div class="runs-list" id="runsList"></div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

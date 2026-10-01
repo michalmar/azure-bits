@@ -54,59 +54,76 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if args.fps <= 0:
+        parser.error("--fps must be greater than zero")
+    if args.poster_time < 0:
+        parser.error("--poster-time cannot be negative")
+
     server = serve_static()
     url = f"http://127.0.0.1:{server.server_address[1]}/render.html"
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.poster.parent.mkdir(parents=True, exist_ok=True)
 
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch()
-        page = browser.new_page(viewport={"width": 1920, "height": 1080})
-        page.goto(url)
-        page.wait_for_function("window.timelineReady === true")
-        duration = page.evaluate("window.timelineDuration")
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page(viewport={"width": 1920, "height": 1080})
+                page.goto(url, wait_until="networkidle")
+                page.wait_for_function("window.timelineReady === true")
+                duration = float(page.evaluate("window.timelineDuration"))
 
-        if args.stills is not None:
-            for t in args.stills:
-                still = args.output.with_name(f"still-{t:05.1f}.png")
-                still.write_bytes(decode(page.evaluate("t => window.renderFrame(t)", t)))
-                print(f"Wrote {still}")
-            browser.close()
-            server.shutdown()
-            return
+                if args.stills is not None:
+                    for t in args.stills:
+                        if not 0 <= t <= duration:
+                            parser.error(f"still time {t} is outside the 0–{duration:.1f}s timeline")
+                        still = args.output.with_name(f"still-{t:05.1f}.png")
+                        still.write_bytes(decode(page.evaluate("t => window.renderFrame(t)", t)))
+                        print(f"Wrote {still}")
+                    return
 
-        args.poster.write_bytes(decode(page.evaluate("t => window.renderFrame(t)", args.poster_time)))
-        print(f"Wrote {args.poster}")
+                poster_time = min(args.poster_time, duration)
+                args.poster.write_bytes(
+                    decode(page.evaluate("t => window.renderFrame(t)", poster_time))
+                )
+                print(f"Wrote {args.poster}")
 
-        frames = int(round(duration * args.fps))
-        ffmpeg = subprocess.Popen(
-            [
-                imageio_ffmpeg.get_ffmpeg_exe(),
-                "-y",
-                "-loglevel", "error",
-                "-f", "image2pipe",
-                "-framerate", str(args.fps),
-                "-c:v", "png",
-                "-i", "-",
-                "-c:v", "libx264",
-                "-preset", "slow",
-                "-crf", "20",
-                "-pix_fmt", "yuv420p",
-                "-movflags", "+faststart",
-                str(args.output),
-            ],
-            stdin=subprocess.PIPE,
-        )
-        assert ffmpeg.stdin is not None
-        for i in range(frames + 1):
-            ffmpeg.stdin.write(decode(page.evaluate("t => window.renderFrame(t)", i / args.fps)))
-            if i % (args.fps * 5) == 0:
-                print(f"Frame {i}/{frames}")
-        ffmpeg.stdin.close()
-        if ffmpeg.wait() != 0:
-            raise SystemExit("ffmpeg failed")
-        browser.close()
+                frames = int(round(duration * args.fps))
+                ffmpeg = subprocess.Popen(
+                    [
+                        imageio_ffmpeg.get_ffmpeg_exe(),
+                        "-y",
+                        "-loglevel", "error",
+                        "-f", "image2pipe",
+                        "-framerate", str(args.fps),
+                        "-c:v", "png",
+                        "-i", "-",
+                        "-c:v", "libx264",
+                        "-preset", "slow",
+                        "-crf", "20",
+                        "-pix_fmt", "yuv420p",
+                        "-movflags", "+faststart",
+                        str(args.output),
+                    ],
+                    stdin=subprocess.PIPE,
+                )
+                assert ffmpeg.stdin is not None
+                try:
+                    for i in range(frames + 1):
+                        frame = page.evaluate("t => window.renderFrame(t)", i / args.fps)
+                        ffmpeg.stdin.write(decode(frame))
+                        if i % (args.fps * 5) == 0:
+                            print(f"Frame {i}/{frames}")
+                finally:
+                    ffmpeg.stdin.close()
+                if ffmpeg.wait() != 0:
+                    raise SystemExit("ffmpeg failed")
+            finally:
+                browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
 
-    server.shutdown()
     print(f"Wrote {args.output} ({duration:.1f}s at {args.fps} fps)")
 
 

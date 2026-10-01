@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="An animated comparison of OpenAI and Anthropic model releases from October 2024 through September 2026."
+    />
+    <title>AI model release timeline | Azure Bits</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23111315%22/><circle cx=%2211%22 cy=%2216%22 r=%224%22 fill=%22%230e8f6f%22/><circle cx=%2221%22 cy=%2216%22 r=%224%22 fill=%22%23c4623f%22/></svg>" />
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./baseline.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="demo-brand" href="../" aria-label="Azure Bits home">
+          <span>Azure Bits</span>
+          <span class="demo-brand__divider" aria-hidden="true"></span>
+          <span class="demo-brand__family">AI release timeline</span>
+        </a>
+        <nav class="demo-nav" aria-label="Page sections">
+          <a class="demo-nav__item is-active" href="#timeline">Timeline</a>
+          <a class="demo-nav__item" href="#about">About</a>
+        </nav>
+        <div class="demo-header__actions">
+          <a class="header-link" href="./releases.json">View data</a>
+        </div>
+      </header>
+
+      <main class="demo-main">
+        <section class="demo-page-head">
+          <div>
+            <p class="eyebrow">October 2024 – September 2026</p>
+            <h1>Two labs. Two years. One shared clock.</h1>
+          </div>
+          <p class="demo-lead">
+            Follow OpenAI and Anthropic releases on a synchronized timeline,
+            then zoom out to compare cadence, major generation changes, and
+            same-day launches.
+          </p>
+        </section>
+
+        <section id="timeline" class="player" aria-labelledby="player-title">
+          <div class="player__heading">
+            <div>
+              <h2 id="player-title">Model release timeline</h2>
+              <p id="player-status" class="demo-support" role="status">Loading release data…</p>
+            </div>
+            <a
+              class="demo-button demo-button--secondary"
+              href="../media/model-release-timeline.mp4"
+              download
+            >
+              Download MP4
+            </a>
+          </div>
+
+          <div class="demo-media player__stage">
+            <canvas
+              id="stage"
+              width="1920"
+              height="1080"
+              aria-label="Animated timeline of OpenAI and Anthropic model releases"
+            ></canvas>
+            <div id="player-error" class="player__error" hidden>
+              <strong>Timeline unavailable</strong>
+              <span>Refresh the page or verify that releases.json can be loaded.</span>
+            </div>
+          </div>
+
+          <div class="player__controls" aria-label="Timeline playback controls">
+            <button id="play-button" class="demo-button demo-button--primary" type="button" disabled>
+              Play
+            </button>
+            <label class="scrubber">
+              <span class="sr-only">Timeline position</span>
+              <input id="scrubber" type="range" min="0" max="1" step="0.01" value="0" disabled />
+            </label>
+            <output id="time-readout" for="scrubber">0:00 / 0:00</output>
+            <button id="restart-button" class="demo-button demo-button--secondary" type="button" disabled>
+              Restart
+            </button>
+          </div>
+        </section>
+
+        <section id="about" class="about" aria-labelledby="about-title">
+          <div>
+            <p class="eyebrow">How to read it</p>
+            <h2 id="about-title">Public availability, not announcement hype</h2>
+          </div>
+          <div class="about__copy">
+            <p>
+              Each dot represents a model’s first public availability. Larger
+              ringed dots mark generation-level changes. The two colored lanes
+              share one date axis, making release clusters and direct timing
+              comparisons visible.
+            </p>
+            <p>
+              The animation is deterministic: the browser player and MP4
+              exporter render the same frame for the same timestamp. Source
+              links and editorial notes are stored alongside every release in
+              <a href="./releases.json">releases.json</a>.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./player.js"></script>
+  </body>
+</html>

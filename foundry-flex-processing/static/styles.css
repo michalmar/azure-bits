@@ -1,0 +1,481 @@
+.price-tape {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr auto;
+  gap: 24px;
+  align-items: end;
+  padding: 18px 0;
+  border-block: 1px solid var(--hairline);
+}
+
+.reader-name {
+  max-width: 18ch;
+  overflow: hidden;
+  color: var(--header-cyan);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price-tape > div {
+  display: grid;
+  gap: 3px;
+}
+
+.price-tape__label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.price-tape strong {
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.price-tape a,
+.method-note a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 650;
+  text-underline-offset: 4px;
+}
+
+.results-view {
+  padding-bottom: 40px;
+}
+
+.results-page-head {
+  margin-bottom: 38px;
+}
+
+.aggregate-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.aggregate-card {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--hairline);
+  border-top: 3px solid var(--ink);
+  border-radius: var(--radius-surface);
+  box-shadow: var(--shadow-media);
+}
+
+.aggregate-card[data-tier="flex"] {
+  border-top-color: var(--cyan);
+}
+
+.aggregate-card--comparison {
+  border-top-color: var(--green);
+}
+
+.aggregate-card__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.aggregate-card h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.aggregate-card__heading span,
+.aggregate-card > p {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.aggregate-card > strong {
+  display: block;
+  margin-top: 26px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+}
+
+.aggregate-card > p {
+  margin: 2px 0 22px;
+}
+
+.aggregate-card__note {
+  margin-top: 30px !important;
+  font-size: 0.9rem !important;
+}
+
+.aggregate-metrics {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 14px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.82rem;
+}
+
+.aggregate-metrics dt,
+.aggregate-metrics dd {
+  padding: 5px 0;
+}
+
+.aggregate-metrics dt {
+  color: var(--muted);
+}
+
+.aggregate-metrics dd {
+  margin: 0;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.results-table-section {
+  margin-top: 52px;
+}
+
+.runs-list {
+  border-top: 1px solid var(--hairline);
+}
+
+.run-row {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.run-row summary {
+  display: grid;
+  grid-template-columns: 0.55fr repeat(3, 1fr);
+  gap: 18px;
+  align-items: center;
+  min-height: 64px;
+  cursor: pointer;
+  list-style-position: inside;
+  font-size: 0.86rem;
+}
+
+.run-row summary span {
+  color: var(--slate);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.run-row__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  padding: 0 0 28px 28px;
+}
+
+.run-response h4 {
+  margin: 0;
+}
+
+.run-response__meta {
+  margin: 5px 0 14px;
+  color: var(--muted);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.78rem;
+}
+
+.run-response__text {
+  max-height: 280px;
+  margin: 0;
+  overflow: auto;
+  color: var(--slate);
+  white-space: pre-wrap;
+}
+
+.pricing-warning {
+  margin: 10px 0 0;
+  color: var(--red);
+  font-size: 0.86rem;
+}
+
+.output-limit {
+  max-width: 230px;
+}
+
+.run-status {
+  min-height: 42px;
+  margin: -10px 0 0;
+  color: var(--slate);
+  font-size: 0.9rem;
+}
+
+.results-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.results-heading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.results-heading p {
+  max-width: 690px;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.model-name {
+  flex: 0 0 auto;
+  color: var(--slate);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.82rem;
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.race-lane {
+  min-width: 0;
+  padding: 22px;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-top: 3px solid var(--ink);
+  border-radius: var(--radius-surface);
+  box-shadow: var(--shadow-media);
+}
+
+.race-lane[data-tier="flex"] {
+  border-top-color: var(--cyan);
+}
+
+.race-lane[data-state="loading"] {
+  background:
+    linear-gradient(90deg, transparent, rgba(238, 242, 246, 0.85), transparent),
+    var(--paper);
+  background-size: 200% 100%;
+  animation: waiting 1.6s linear infinite;
+}
+
+.race-lane[data-state="error"] {
+  border-top-color: var(--red);
+}
+
+@keyframes waiting {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.race-lane__header,
+.race-lane__header > div {
+  display: flex;
+  align-items: center;
+}
+
+.race-lane__header {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.race-lane__header > div {
+  gap: 12px;
+}
+
+.race-lane__marker {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  flex: 0 0 auto;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+[data-tier="flex"] .race-lane__marker {
+  color: var(--ink);
+  background: var(--header-cyan);
+}
+
+.race-lane h3,
+.race-lane p {
+  margin: 0;
+}
+
+.race-lane h3 {
+  font-size: 1.04rem;
+}
+
+.race-lane__header p {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.race-lane__total {
+  flex: 0 0 auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.latency-track {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  margin: 24px 0;
+  overflow: hidden;
+  background: var(--paper-muted);
+  border-radius: 2px;
+}
+
+.latency-track span {
+  display: block;
+  min-width: 0;
+  height: 100%;
+}
+
+[data-phase="auth"] { background: #94a3b8; }
+[data-phase="headers"] { background: #425466; }
+[data-phase="first"] { background: #00a3c7; }
+[data-phase="generation"] { background: #0a2540; }
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 18px;
+  margin: 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.82rem;
+}
+
+.metric-grid dt,
+.metric-grid dd {
+  padding: 5px 0;
+}
+
+.metric-grid dt {
+  color: var(--muted);
+}
+
+.metric-grid dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: Consolas, "Courier New", monospace;
+  text-align: right;
+}
+
+.response-copy {
+  max-height: 430px;
+  min-height: 210px;
+  margin-top: 18px;
+  overflow: auto;
+  color: var(--slate);
+}
+
+.response-copy p {
+  white-space: pre-wrap;
+}
+
+.lane-error {
+  min-height: 210px;
+  margin-top: 18px !important;
+  color: var(--red);
+}
+
+.track-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.track-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track-legend i {
+  width: 9px;
+  height: 9px;
+}
+
+.method-note {
+  max-width: 900px;
+  margin-top: 58px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+}
+
+.method-note h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.method-note p {
+  margin: 8px 0 2px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 1180px) {
+  .price-tape {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .price-tape a {
+    grid-column: 1 / -1;
+  }
+
+  .race-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aggregate-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .price-tape {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .results-heading {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .race-lane {
+    padding: 18px;
+  }
+
+  .race-lane__header {
+    align-items: flex-start;
+  }
+
+  .race-lane__header p {
+    display: none;
+  }
+
+  .run-row summary {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 15px 0;
+  }
+
+  .run-row__body {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+}
