@@ -374,6 +374,7 @@ def _update_container_app(
     snapshot: dict[str, Any],
     session_secret_value: str | None = None,
     container_image: str | None = None,
+    priority_model_deployment: str | None = None,
 ) -> dict[str, Any]:
     preserved_secret_values = _snapshot_secret_values(snapshot)
     for _ in range(MAX_RETRIES):
@@ -408,6 +409,11 @@ def _update_container_app(
                 "ENTRA_CLIENT_SECRET": {"name": "ENTRA_CLIENT_SECRET", "secretRef": secret_name},
             }
         )
+        if priority_model_deployment is not None:
+            by_name["AZURE_OPENAI_PRIORITY_DEPLOYMENT"] = {
+                "name": "AZURE_OPENAI_PRIORITY_DEPLOYMENT",
+                "value": priority_model_deployment,
+            }
         containers[0]["env"] = [by_name[key] for key in sorted(by_name)]
         configuration = current["properties"]["configuration"]
         secrets_list = [
@@ -464,6 +470,7 @@ def _update_container_image(
     *,
     container_image: str,
     snapshot: dict[str, Any],
+    priority_model_deployment: str | None = None,
 ) -> dict[str, Any]:
     preserved_secret_values = _snapshot_secret_values(snapshot)
     for _ in range(MAX_RETRIES):
@@ -473,6 +480,18 @@ def _update_container_image(
         if not containers:
             raise RuntimeError("container app has no containers")
         containers[0]["image"] = container_image
+        if priority_model_deployment is not None:
+            env = list(containers[0].get("env", []))
+            by_name = {
+                item["name"]: item
+                for item in env
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
+            by_name["AZURE_OPENAI_PRIORITY_DEPLOYMENT"] = {
+                "name": "AZURE_OPENAI_PRIORITY_DEPLOYMENT",
+                "value": priority_model_deployment,
+            }
+            containers[0]["env"] = [by_name[key] for key in sorted(by_name)]
         try:
             return _apply_container_app_snapshot(current)
         except PreconditionFailed:
@@ -557,6 +576,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--tenant-id", required=True)
     parser.add_argument("--identity-client-id", required=True)
     parser.add_argument("--container-image")
+    parser.add_argument("--priority-model-deployment")
     parser.add_argument("--image-only", action="store_true")
     parser.add_argument("--rotate-client-secret", action="store_true")
     return parser.parse_args(argv)
@@ -596,6 +616,7 @@ def main(argv: list[str] | None = None) -> int:
                 app_id,
                 container_image=args.container_image,
                 snapshot=previous_app,
+                priority_model_deployment=args.priority_model_deployment,
             )
             wait_for_container_app_provisioning(app_id)
             stop_start_container_app(app_id)
@@ -669,6 +690,7 @@ def main(argv: list[str] | None = None) -> int:
             secret_value=secret_value,
             session_secret_value=session_secret_value,
             container_image=args.container_image,
+            priority_model_deployment=args.priority_model_deployment,
             snapshot=previous_app,
         )
         wait_for_container_app_provisioning(app_id)

@@ -177,7 +177,7 @@ cleanup() {
 trap cleanup EXIT
 
 check_subscription() {
-  local current tenant deployment
+  local current tenant deployment priority_deployment
   current="$(az_wrap account show --query id -o tsv)"
   if [[ "$current" != "$TARGET_SUBSCRIPTION" ]]; then
     echo "Expected subscription $TARGET_SUBSCRIPTION but Azure CLI is on $current" >&2
@@ -197,6 +197,14 @@ check_subscription() {
     --deployment-name gpt-5.6-sol --query properties.model.name -o tsv)"
   if [[ "$deployment" != "gpt-5.6-sol" ]]; then
     echo "Existing Foundry deployment gpt-5.6-sol was not found on $FOUNDRY_ACCOUNT_NAME." >&2
+    exit 1
+  fi
+  priority_deployment="$(az_wrap cognitiveservices account deployment show \
+    --name "$FOUNDRY_ACCOUNT_NAME" --resource-group "$FOUNDRY_RESOURCE_GROUP" \
+    --deployment-name gpt-5.6-sol-priority \
+    --query "join('|', [properties.model.name, properties.serviceTier])" -o tsv)"
+  if [[ "$priority_deployment" != "gpt-5.6-sol|Priority" ]]; then
+    echo "Priority-enabled deployment gpt-5.6-sol-priority was not found on $FOUNDRY_ACCOUNT_NAME." >&2
     exit 1
   fi
 }
@@ -317,6 +325,7 @@ assert env.get('BOOTSTRAP_LOCKED') == 'false', env
 assert env.get('ALLOWED_USERS') == 'tenant:*', env
 assert env.get('AZURE_OPENAI_ENDPOINT') == '$AZURE_OPENAI_ENDPOINT', env
 assert env.get('AZURE_OPENAI_DEPLOYMENT') == 'gpt-5.6-sol', env
+assert env.get('AZURE_OPENAI_PRIORITY_DEPLOYMENT') == 'gpt-5.6-sol-priority', env
 assert env.get('MAX_TRANSIENT_ATTEMPTS') == '3', env
 "
 
@@ -353,6 +362,7 @@ main() {
     --resource-group "$TARGET_RESOURCE_GROUP"
     --tenant-id "$TARGET_TENANT_ID"
     --container-image "$BUILT_IMAGE"
+    --priority-model-deployment "gpt-5.6-sol-priority"
     --identity-client-id "$(tf_wrap output -raw identity_client_id)"
   )
   if [[ "$CONTAINER_APP_EXISTS" == "true" && "$CURRENT_AUTH_CONFIG_COMPLETE" == "true" && "$CURRENT_BOOTSTRAP_LOCKED" == "false" ]]; then

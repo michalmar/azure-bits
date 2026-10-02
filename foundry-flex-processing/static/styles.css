@@ -1,10 +1,18 @@
 .price-tape {
   display: grid;
-  grid-template-columns: 1.25fr 1fr 1fr auto;
+  grid-template-columns: 1.25fr repeat(3, 1fr) auto;
   gap: 24px;
   align-items: end;
   padding: 18px 0;
   border-block: 1px solid var(--hairline);
+}
+
+[data-tier="priority"] .race-lane__marker {
+  background: var(--green);
+}
+
+.race-lane[data-tier="priority"] {
+  border-top-color: var(--green);
 }
 
 .reader-name {
@@ -16,9 +24,19 @@
   white-space: nowrap;
 }
 
+.aggregate-card[data-tier="priority"] {
+  border-top-color: var(--green);
+}
+
 .price-tape > div {
   display: grid;
   gap: 3px;
+}
+
+.method-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
 }
 
 .price-tape__label {
@@ -52,7 +70,7 @@
 
 .aggregate-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -164,7 +182,7 @@
 
 .run-row__body {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
   padding: 0 0 28px 28px;
 }
@@ -236,7 +254,7 @@
 
 .race-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -429,7 +447,7 @@
 
 @media (max-width: 1180px) {
   .price-tape {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .price-tape a {

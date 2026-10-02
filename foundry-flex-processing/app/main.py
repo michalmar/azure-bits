@@ -159,6 +159,7 @@ def create_app(
         pricing = await benchmark.pricing.get()
         return {
             "model": resolved_settings.deployment,
+            "priorityDeployment": resolved_settings.priority_deployment,
             "defaultMaxOutputTokens": resolved_settings.default_max_output_tokens,
             "maxOutputTokens": MAX_OUTPUT_TOKENS,
             "maxPromptLength": MAX_PROMPT_LENGTH,
@@ -175,16 +176,36 @@ def create_app(
         benchmark: FlexBenchmarkService = request.app.state.service
         pricing = await benchmark.pricing.get()
         started = time.perf_counter()
-        standard, flex = await asyncio.gather(
-            benchmark.safe_run_tier(payload.prompt, "default", payload.max_output_tokens, pricing),
-            benchmark.safe_run_tier(payload.prompt, "flex", payload.max_output_tokens, pricing),
+        standard, flex, priority = await asyncio.gather(
+            benchmark.safe_run_tier(
+                payload.prompt,
+                "default",
+                resolved_settings.deployment,
+                payload.max_output_tokens,
+                pricing,
+            ),
+            benchmark.safe_run_tier(
+                payload.prompt,
+                "flex",
+                resolved_settings.deployment,
+                payload.max_output_tokens,
+                pricing,
+            ),
+            benchmark.safe_run_tier(
+                payload.prompt,
+                "priority",
+                resolved_settings.priority_deployment,
+                payload.max_output_tokens,
+                pricing,
+            ),
         )
         return {
             "model": resolved_settings.deployment,
+            "priorityDeployment": resolved_settings.priority_deployment,
             "parallel": True,
             "wallClockMs": round((time.perf_counter() - started) * 1000, 1),
             "pricing": pricing,
-            "results": {"standard": standard, "flex": flex},
+            "results": {"standard": standard, "flex": flex, "priority": priority},
         }
 
     @app.get("/", include_in_schema=False)

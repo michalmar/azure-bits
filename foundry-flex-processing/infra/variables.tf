@@ -31,6 +31,12 @@ variable "model_deployment" {
   description = "Name of the existing GPT-5.6 Sol deployment."
 }
 
+variable "priority_model_deployment" {
+  type        = string
+  default     = "gpt-5.6-sol-priority"
+  description = "Name of the existing GPT-5.6 Sol Priority-enabled deployment."
+}
+
 variable "container_image" {
   type        = string
   default     = ""

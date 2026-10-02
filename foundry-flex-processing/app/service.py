@@ -95,6 +95,7 @@ class FlexBenchmarkService:
         self,
         prompt: str,
         service_tier: str,
+        deployment: str,
         max_output_tokens: int,
         pricing: dict[str, Any],
     ) -> dict[str, Any]:
@@ -102,7 +103,7 @@ class FlexBenchmarkService:
         token = await self._access_token()
         authenticated = time.perf_counter()
         body = {
-            "model": self.settings.deployment,
+            "model": deployment,
             "input": prompt,
             "service_tier": service_tier,
             "max_output_tokens": max_output_tokens,
@@ -190,7 +191,13 @@ class FlexBenchmarkService:
         if not isinstance(usage, dict):
             usage = {}
         processed_tier = final_response.get("service_tier")
-        price_key = "flex" if processed_tier == "flex" else "standard"
+        price_key = (
+            "flex"
+            if processed_tier == "flex"
+            else "priority"
+            if processed_tier == "priority"
+            else "standard"
+        )
         tier_prices = pricing[price_key]
         latency = {
             "authenticationMs": round((authenticated - started) * 1000, 1),
@@ -211,6 +218,7 @@ class FlexBenchmarkService:
         return {
             "ok": True,
             "requestedTier": service_tier,
+            "deployment": deployment,
             "processedTier": processed_tier,
             "responseId": final_response.get("id"),
             "status": final_response.get("status"),
@@ -229,13 +237,16 @@ class FlexBenchmarkService:
         self,
         prompt: str,
         service_tier: str,
+        deployment: str,
         max_output_tokens: int,
         pricing: dict[str, Any],
     ) -> dict[str, Any]:
         delays: list[float] = []
         for attempt in range(1, self.settings.max_transient_attempts + 1):
             try:
-                result = await self.run_tier(prompt, service_tier, max_output_tokens, pricing)
+                result = await self.run_tier(
+                    prompt, service_tier, deployment, max_output_tokens, pricing
+                )
                 result["attempts"] = attempt
                 result["retryDelaysMs"] = [round(delay * 1000) for delay in delays]
                 return result

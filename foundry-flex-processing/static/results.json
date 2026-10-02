@@ -1,11 +1,12 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "priorityDeployment": "gpt-5.6-sol-priority",
   "model": "gpt-5.6-sol",
   "prompt": "Explain in practical terms when a software team should choose Flex processing instead of Standard processing. Include one concrete example and one reason not to use Flex.",
   "maxOutputTokens": 400,
   "runCount": 10,
-  "startedAt": "2026-09-29T10:24:03.761113+00:00",
-  "completedAt": "2026-09-29T10:26:46.471506+00:00",
+  "startedAt": "2026-10-02T08:33:20.212399+00:00",
+  "completedAt": "2026-10-02T08:34:32.296586+00:00",
   "pricing": {
     "currency": "USD",
     "unit": "1M tokens",
@@ -21,17 +22,32 @@
       "cacheWrite": 2.5,
       "output": 10.0
     },
+    "priority": {
+      "input": 8.0,
+      "cachedInput": 0.8,
+      "cacheWrite": 10.0,
+      "output": 40.0
+    },
     "flexMultiplier": 0.5,
     "source": "Azure Retail Prices API",
-    "retrievedAt": "2026-09-29T10:24:04.127186+00:00",
+    "retrievedAt": "2026-10-02T08:33:20.518583+00:00",
     "retailApiUrl": "https://prices.azure.com/api/retail/prices",
     "pricingPageUrl": "https://azure.microsoft.com/pricing/details/azure-openai/",
     "flexGuideUrl": "https://learn.microsoft.com/azure/foundry/openai/how-to/flex-processing",
+    "priorityGuideUrl": "https://learn.microsoft.com/azure/foundry/openai/concepts/priority-processing",
     "meters": {
-      "input": "5.6 sol ShortCo Inp Std Gl",
-      "cachedInput": "5.6 sol ShortCo Cd Inp Std Gl",
-      "cacheWrite": "5.6 sol ShortCo Cd Wr Std Gl",
-      "output": "5.6 sol ShortCo Opt Std Gl"
+      "standard": {
+        "input": "5.6 sol ShortCo Inp Std Gl",
+        "cachedInput": "5.6 sol ShortCo Cd Inp Std Gl",
+        "cacheWrite": "5.6 sol ShortCo Cd Wr Std Gl",
+        "output": "5.6 sol ShortCo Opt Std Gl"
+      },
+      "priority": {
+        "input": "5.6 sol ShortCo Inp PP Gl",
+        "cachedInput": "5.6 sol ShortCo Cd Inp PP Gl",
+        "cacheWrite": "5.6 sol ShortCo Cd Wr PP Gl",
+        "output": "5.6 sol ShortCo Opt PP Gl"
+      }
     }
   },
   "aggregate": {
@@ -39,57 +55,1130 @@
       "totalRuns": 10,
       "successfulRuns": 10,
       "totalMs": {
-        "p50": 5939.0,
-        "p95": 20212.2
+        "p50": 3798.5,
+        "p95": 6185.3
       },
       "timeToFirstTokenMs": {
-        "p50": 3303.3,
-        "p95": 17885.7
+        "p50": 2179.3,
+        "p95": 3397.0
       },
-      "averageCost": 0.005184,
-      "averageOutputTokens": 252.2,
-      "totalRetries": 0
+      "averageCost": 0.005236,
+      "averageOutputTokens": 254.8,
+      "totalRetries": 0,
+      "processedTierCounts": {
+        "default": 10
+      }
     },
     "flex": {
       "totalRuns": 10,
       "successfulRuns": 10,
       "totalMs": {
-        "p50": 4980.5,
-        "p95": 29152.7
+        "p50": 4569.3,
+        "p95": 6720.7
       },
       "timeToFirstTokenMs": {
-        "p50": 2933.1,
-        "p95": 27325.0
+        "p50": 2749.8,
+        "p95": 4780.7
       },
-      "averageCost": 0.002672,
-      "averageOutputTokens": 260.2,
-      "totalRetries": 1
+      "averageCost": 0.002644,
+      "averageOutputTokens": 257.4,
+      "totalRetries": 0,
+      "processedTierCounts": {
+        "flex": 10
+      }
+    },
+    "priority": {
+      "totalRuns": 10,
+      "successfulRuns": 10,
+      "totalMs": {
+        "p50": 4242.4,
+        "p95": 8754.9
+      },
+      "timeToFirstTokenMs": {
+        "p50": 2649.9,
+        "p95": 4600.9
+      },
+      "averageCost": 0.010804,
+      "averageOutputTokens": 263.1,
+      "totalRetries": 0,
+      "processedTierCounts": {
+        "priority": 10
+      }
     },
     "comparison": {
-      "successfulPairs": 10,
-      "medianLatencyDeltaPercent": -16.1,
-      "averageCostSavingsPercent": 47.8
+      "successfulTriples": 10,
+      "flexMedianLatencyDeltaPercent": 20.3,
+      "priorityMedianLatencyDeltaPercent": 11.7,
+      "flexAverageCostSavingsPercent": 48.9
     }
   },
   "runs": [
     {
       "run": 1,
-      "capturedAt": "2026-09-29T10:24:33.282510+00:00",
-      "wallClockMs": 29153.0,
+      "capturedAt": "2026-10-02T08:33:25.399193+00:00",
+      "wallClockMs": 4877.0,
       "standard": {
         "ok": true,
         "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
         "processedTier": "default",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the workload is **non-urgent, tolerant of slower or variable response times, and cost-sensitive**. It works best for background jobs where your system can retry if capacity is temporarily unavailable.\n\n**Example:** Run a nightly evaluation that scores 100,000 model responses. Results are not needed until the next morning, so lower cost matters more than immediate completion.\n\nUse **Standard processing** for interactive or production-critical requests. **Do not use Flex** for a customer-facing chatbot, for example, because Flex may have longer latency or temporary resource-unavailable errors.",
+        "outputText": "Choose **Flex processing** when work is:\n\n- **Not time-sensitive** and can tolerate slower or variable response times\n- **Retryable** if capacity is temporarily unavailable\n- **Cost-sensitive**, especially for large batch-like workloads\n- Running offline, such as evaluations, data enrichment, summarization, or model testing\n\n**Concrete example:** A team needs to classify five million archived support tickets overnight. Since no user is waiting for each result and failed requests can be retried, Flex can reduce processing costs.\n\nUse **Standard processing** for interactive or production-critical requests. **Do not use Flex** for something like a customer-facing chatbot where predictable latency and availability matter, because Flex requests may be slower or temporarily unavailable.",
         "latency": {
-          "authenticationMs": 464.0,
-          "requestToHeadersMs": 543.7,
-          "headersToFirstTokenMs": 2295.5,
-          "timeToFirstTokenMs": 3303.3,
-          "generationMs": 2635.7,
-          "totalMs": 5939.0
+          "authenticationMs": 534.7,
+          "requestToHeadersMs": 647.7,
+          "headersToFirstTokenMs": 1935.1,
+          "timeToFirstTokenMs": 3117.4,
+          "generationMs": 1759.3,
+          "totalMs": 4876.7
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 285,
+          "output_tokens_details": {
+            "reasoning_tokens": 134
+          },
+          "total_tokens": 320
+        },
+        "cost": {
+          "amount": 0.00584,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0057
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 285
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when a workload is:\n\n- **Not time-sensitive** and can tolerate slower or variable response times.\n- **Asynchronous or batch-oriented**, such as offline analysis, evaluations, data enrichment, or report generation.\n- **Cost-sensitive**, where lower processing costs matter more than predictable latency.\n- Built with **retry handling**, because Flex requests may occasionally be unavailable or take longer to complete.\n\n**Concrete example:** A team classifies and summarizes thousands of customer-support tickets overnight. The results are not needed until the next morning, so Flex can reduce costs without affecting users.\n\n**Reason not to use Flex:** Avoid it for interactive features\u2014such as a customer-facing chatbot\u2014where users expect fast, reliable responses. Use **Standard processing** when consistent availability and latency are important.",
+        "latency": {
+          "authenticationMs": 535.1,
+          "requestToHeadersMs": 592.2,
+          "headersToFirstTokenMs": 1317.4,
+          "timeToFirstTokenMs": 2444.7,
+          "generationMs": 1863.1,
+          "totalMs": 4307.8
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 220,
+          "output_tokens_details": {
+            "reasoning_tokens": 55
+          },
+          "total_tokens": 255
+        },
+        "cost": {
+          "amount": 0.00227,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0022
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 220
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or non-urgent**.\n- You can tolerate **slower or variable response times**.\n- You want **lower processing costs**.\n- Your application can retry requests if capacity is temporarily unavailable.\n\n**Concrete example:** A team runs a nightly job that summarizes thousands of support tickets for next-day reporting. Since results are not needed immediately, Flex can reduce costs without affecting users.\n\n**Do not use Flex** for latency-sensitive, user-facing features\u2014such as a live customer-support chatbot\u2014because responses may be delayed or unavailable during periods of limited capacity. Use **Standard processing** when predictable, timely responses matter.",
+        "latency": {
+          "authenticationMs": 533.2,
+          "requestToHeadersMs": 723.3,
+          "headersToFirstTokenMs": 989.7,
+          "timeToFirstTokenMs": 2246.2,
+          "generationMs": 1618.6,
+          "totalMs": 3864.7
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 230,
+          "output_tokens_details": {
+            "reasoning_tokens": 87
+          },
+          "total_tokens": 265
+        },
+        "cost": {
+          "amount": 0.00948,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0092
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 230
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 2,
+      "capturedAt": "2026-10-02T08:33:31.965486+00:00",
+      "wallClockMs": 4553.0,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when your workload is:\n\n- **Asynchronous or delay-tolerant**\n- **Cost-sensitive**\n- Able to handle **slower responses or occasional resource unavailability**\n- Not on a strict production latency SLA\n\n**Concrete example:** A team running thousands of overnight model evaluations can use Flex to reduce processing costs because results are not needed until the next morning.\n\n**Do not use Flex** for latency-sensitive, customer-facing features\u2014such as a live support chatbot\u2014because response times may be slower or less predictable than with **Standard processing**.",
+        "latency": {
+          "authenticationMs": 481.0,
+          "requestToHeadersMs": 314.8,
+          "headersToFirstTokenMs": 1383.4,
+          "timeToFirstTokenMs": 2179.3,
+          "generationMs": 1309.4,
+          "totalMs": 3488.7
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 215,
+          "output_tokens_details": {
+            "reasoning_tokens": 95
+          },
+          "total_tokens": 250
+        },
+        "cost": {
+          "amount": 0.00444,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0043
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 215
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when work is **asynchronous, non-urgent, and cost-sensitive**. Flex offers lower pricing in exchange for slower or less predictable response times and occasional resource-unavailable errors. Your system should be able to queue jobs and retry failures.\n\n**Example:** A team classifies and summarizes thousands of support tickets overnight. Results are not needed immediately, so Flex can reduce processing costs without affecting users.\n\nUse **Standard processing** for interactive or time-sensitive workloads that need predictable latency and availability.\n\n**Reason not to use Flex:** It is a poor fit for a live chatbot or request-response API, because added latency or temporary capacity errors could directly degrade the user experience.",
+        "latency": {
+          "authenticationMs": 479.5,
+          "requestToHeadersMs": 222.4,
+          "headersToFirstTokenMs": 1890.3,
+          "timeToFirstTokenMs": 2592.1,
+          "generationMs": 1960.0,
+          "totalMs": 4552.1
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 254,
+          "output_tokens_details": {
+            "reasoning_tokens": 111
+          },
+          "total_tokens": 289
+        },
+        "cost": {
+          "amount": 0.00261,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00254
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 254
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when a workload is **non-urgent, asynchronous, and cost-sensitive**, and your system can tolerate slower responses or occasional temporary resource unavailability. Typical uses include batch jobs, evaluations, data enrichment, and offline report generation.\n\n**Example:** A team classifies 500,000 archived support tickets overnight to identify common issues. Since results are not needed immediately, Flex can reduce processing costs without affecting users.\n\n**Do not use Flex** for latency-sensitive or customer-facing features\u2014such as a live chat assistant\u2014because response times are less predictable than with **Standard processing**, and capacity may occasionally be unavailable.",
+        "latency": {
+          "authenticationMs": 481.3,
+          "requestToHeadersMs": 540.0,
+          "headersToFirstTokenMs": 1702.1,
+          "timeToFirstTokenMs": 2723.5,
+          "generationMs": 1518.9,
+          "totalMs": 4242.4
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 249,
+          "output_tokens_details": {
+            "reasoning_tokens": 117
+          },
+          "total_tokens": 284
+        },
+        "cost": {
+          "amount": 0.01024,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00996
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 249
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 3,
+      "capturedAt": "2026-10-02T08:33:38.696282+00:00",
+      "wallClockMs": 4719.6,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when workloads are **asynchronous, non-urgent, and cost-sensitive**. Flex uses spare capacity at a lower price, but requests may take longer and can occasionally fail because capacity is unavailable. Your application should tolerate variable latency and implement retries.\n\n**Example:** A team generating nightly summaries for thousands of internal support tickets could use Flex. The summaries only need to be ready by morning, so lower cost matters more than immediate responses.\n\n**Do not use Flex** for latency-sensitive or user-facing features\u2014such as an interactive chatbot\u2014because unpredictable delays or temporary capacity errors would degrade the user experience. Use **Standard processing** when requests require timely, reliable responses.",
+        "latency": {
+          "authenticationMs": 512.0,
+          "requestToHeadersMs": 321.5,
+          "headersToFirstTokenMs": 989.0,
+          "timeToFirstTokenMs": 1822.5,
+          "generationMs": 1554.5,
+          "totalMs": 3377.0
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 219,
+          "output_tokens_details": {
+            "reasoning_tokens": 76
+          },
+          "total_tokens": 254
+        },
+        "cost": {
+          "amount": 0.00452,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00438
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 219
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when your workload is **not latency-sensitive** and you can trade slower, less predictable response times for **lower cost**. It works best for asynchronous jobs that can be queued, retried, or completed later\u2014such as data enrichment, evaluations, document classification, or generating offline reports.\n\n**Concrete example:** A team needs to summarize 500,000 archived customer-support tickets overnight. Since no user is waiting for each response and failed requests can be retried, Flex is a good fit.\n\n**Do not use Flex** for interactive or time-critical features, such as a live customer-support chatbot. Flex may have longer delays or temporary capacity-related failures, making Standard processing more appropriate when consistent latency and availability matter.",
+        "latency": {
+          "authenticationMs": 513.3,
+          "requestToHeadersMs": 473.8,
+          "headersToFirstTokenMs": 1730.3,
+          "timeToFirstTokenMs": 2717.4,
+          "generationMs": 2002.0,
+          "totalMs": 4719.4
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 250,
+          "output_tokens_details": {
+            "reasoning_tokens": 96
+          },
+          "total_tokens": 285
+        },
+        "cost": {
+          "amount": 0.00257,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0025
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 250
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload is **non-urgent, tolerant of slower or variable response times, and cost-sensitive**. It is a good fit for background jobs, evaluations, data enrichment, or other tasks that can be queued and retried if capacity is temporarily unavailable. Use **Standard processing** when predictable latency and availability matter.\n\n**Example:** A software team runs a nightly job that reviews thousands of internal code files and generates documentation. Results are not needed until the next morning, so Flex can reduce processing costs without affecting users.\n\n**Reason not to use Flex:** Avoid it for latency-sensitive production features\u2014such as a customer-facing chatbot\u2014because requests may take longer or occasionally fail due to unavailable capacity, requiring retries.",
+        "latency": {
+          "authenticationMs": 514.8,
+          "requestToHeadersMs": 338.1,
+          "headersToFirstTokenMs": 1784.2,
+          "timeToFirstTokenMs": 2637.2,
+          "generationMs": 1479.8,
+          "totalMs": 4117.0
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 283,
+          "output_tokens_details": {
+            "reasoning_tokens": 130
+          },
+          "total_tokens": 318
+        },
+        "cost": {
+          "amount": 0.0116,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01132
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 283
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 4,
+      "capturedAt": "2026-10-02T08:33:45.011549+00:00",
+      "wallClockMs": 4303.9,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload:\n\n- Is **asynchronous or non-urgent**\n- Can tolerate **slower or variable response times**\n- Can handle occasional **resource-unavailable errors with retries**\n- Benefits more from **lower processing cost** than predictable latency\n\n**Example:** A team runs a nightly batch job that classifies and summarizes 500,000 support tickets for analytics. Results are not needed until the next morning, so Flex can reduce cost without affecting users.\n\n**Do not use Flex** for latency-sensitive, customer-facing features\u2014such as a live chatbot\u2014because requests may be delayed or temporarily unavailable. Use **Standard processing** when consistent availability and response time matter.",
+        "latency": {
+          "authenticationMs": 459.0,
+          "requestToHeadersMs": 213.3,
+          "headersToFirstTokenMs": 2724.7,
+          "timeToFirstTokenMs": 3397.0,
+          "generationMs": 906.6,
+          "totalMs": 4303.6
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 288,
+          "output_tokens_details": {
+            "reasoning_tokens": 143
+          },
+          "total_tokens": 323
+        },
+        "cost": {
+          "amount": 0.0059,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00576
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 288
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload is **not time-sensitive** and the team can tolerate slower responses or occasional resource unavailability in exchange for **lower processing costs**. It fits asynchronous jobs, evaluations, data enrichment, and other background tasks that can be retried.\n\n**Example:** A team generates nightly summaries for thousands of customer-support conversations. Since results are not needed until the next morning, they use Flex rather than Standard to reduce cost.\n\n**Do not use Flex** for latency-sensitive or interactive production features\u2014such as a live customer-support chatbot\u2014because response times may be slower and processing capacity may sometimes be unavailable.",
+        "latency": {
+          "authenticationMs": 460.6,
+          "requestToHeadersMs": 252.1,
+          "headersToFirstTokenMs": 1340.6,
+          "timeToFirstTokenMs": 2053.3,
+          "generationMs": 1575.9,
+          "totalMs": 3629.1
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 201,
+          "output_tokens_details": {
+            "reasoning_tokens": 69
+          },
+          "total_tokens": 236
+        },
+        "cost": {
+          "amount": 0.00208,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00201
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 201
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload is **non-urgent, tolerant of slower or variable response times, and cost-sensitive**. It works well for background jobs, evaluations, data enrichment, or other tasks that can be retried if capacity is temporarily unavailable.\n\n**Example:** A team generates summaries for thousands of archived support tickets overnight. Results are not needed immediately, so Flex can reduce processing costs without affecting users.\n\nUse **Standard processing** for interactive or time-sensitive features, such as a customer-facing chatbot.\n\n**Reason not to use Flex:** It may have longer latency or temporary resource unavailability, making it unsuitable when responses must arrive quickly or predictably.",
+        "latency": {
+          "authenticationMs": 463.5,
+          "requestToHeadersMs": 517.0,
+          "headersToFirstTokenMs": 1748.2,
+          "timeToFirstTokenMs": 2728.7,
+          "generationMs": 1556.8,
+          "totalMs": 4285.5
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 266,
+          "output_tokens_details": {
+            "reasoning_tokens": 127
+          },
+          "total_tokens": 301
+        },
+        "cost": {
+          "amount": 0.01092,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01064
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 266
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 5,
+      "capturedAt": "2026-10-02T08:33:52.472885+00:00",
+      "wallClockMs": 5453.4,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or non-urgent**.\n- Your team prioritizes **lower cost over predictable latency**.\n- Jobs can tolerate slower responses, retries, or occasional resource unavailability.\n- Examples include batch enrichment, offline analysis, evaluations, and generating synthetic training data.\n\nUse **Standard processing** for interactive or time-sensitive production traffic where users expect prompt, reliable responses.\n\n**Concrete example:** A team classifies and summarizes yesterday\u2019s support tickets overnight. Since results are not needed until the next morning, it can use Flex to reduce processing costs.\n\n**Reason not to use Flex:** Avoid it for a customer-facing chat assistant, because variable latency or temporary lack of capacity could noticeably degrade the user experience.",
+        "latency": {
+          "authenticationMs": 443.3,
+          "requestToHeadersMs": 285.4,
+          "headersToFirstTokenMs": 2208.3,
+          "timeToFirstTokenMs": 2937.0,
+          "generationMs": 2053.0,
+          "totalMs": 4990.0
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 310,
+          "output_tokens_details": {
+            "reasoning_tokens": 153
+          },
+          "total_tokens": 345
+        },
+        "cost": {
+          "amount": 0.00634,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.0062
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 310
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- Work is **asynchronous or not latency-sensitive**\n- You can tolerate **slower or variable response times**\n- Your application can **retry occasional resource-unavailable errors**\n- Reducing inference cost matters more than immediate completion\n\n**Example:** A team generating nightly summaries and tags for thousands of support tickets could use Flex. The job runs in the background, so finishing later is acceptable, and the lower processing cost can be significant.\n\nUse **Standard processing** for interactive or time-critical workloads, such as chat responses, live coding assistance, or requests in a user-facing web flow.\n\n**One reason not to use Flex:** capacity is less predictable, so requests may be delayed or temporarily unavailable\u2014making it unsuitable when users expect fast, reliable responses.",
+        "latency": {
+          "authenticationMs": 450.5,
+          "requestToHeadersMs": 344.0,
+          "headersToFirstTokenMs": 2891.6,
+          "timeToFirstTokenMs": 3686.0,
+          "generationMs": 1767.1,
+          "totalMs": 5453.1
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 329,
+          "output_tokens_details": {
+            "reasoning_tokens": 166
+          },
+          "total_tokens": 364
+        },
+        "cost": {
+          "amount": 0.00336,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00329
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 329
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **not latency-sensitive**.\n- Requests can tolerate **slower responses or occasional resource unavailability**.\n- Lower processing cost matters more than predictable response time.\n- The work is offline or asynchronous, such as evaluations, data enrichment, classification, or backfills.\n\n**Concrete example:** A team runs a nightly job that classifies and summarizes 100,000 support tickets for analytics. Since results are not needed until the next morning, Flex is a good fit and can reduce cost.\n\nUse **Standard processing** for interactive or time-sensitive features requiring consistent response times.\n\n**Reason not to use Flex:** It is a poor choice for a customer-facing chatbot, because slower or temporarily unavailable processing could noticeably degrade the user experience.",
+        "latency": {
+          "authenticationMs": 446.0,
+          "requestToHeadersMs": 256.8,
+          "headersToFirstTokenMs": 1984.1,
+          "timeToFirstTokenMs": 2686.9,
+          "generationMs": 1581.4,
+          "totalMs": 4268.3
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 301,
+          "output_tokens_details": {
+            "reasoning_tokens": 140
+          },
+          "total_tokens": 336
+        },
+        "cost": {
+          "amount": 0.01232,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01204
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 301
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 6,
+      "capturedAt": "2026-10-02T08:34:01.199641+00:00",
+      "wallClockMs": 6720.8,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when a workload is:\n\n- **Not latency-sensitive** and can tolerate slower or variable response times\n- **Asynchronous or batch-oriented**\n- **Able to handle occasional resource unavailability with retries**\n- **Cost-sensitive**, since Flex is priced lower than Standard processing\n\n**Concrete example:** A team generating summaries and metadata overnight for 500,000 archived support tickets could use Flex. The job can run in the background, retry failed requests, and finish later without affecting users.\n\nChoose **Standard processing** for interactive or time-critical workloads. For example, don\u2019t use Flex for a customer-facing chatbot where users expect immediate, consistently available responses; variable latency or temporary capacity issues would degrade the experience.",
+        "latency": {
+          "authenticationMs": 418.8,
+          "requestToHeadersMs": 256.5,
+          "headersToFirstTokenMs": 1176.8,
+          "timeToFirstTokenMs": 1852.2,
+          "generationMs": 1795.9,
+          "totalMs": 3648.0
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 238,
+          "output_tokens_details": {
+            "reasoning_tokens": 87
+          },
+          "total_tokens": 273
+        },
+        "cost": {
+          "amount": 0.0049,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00476
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 238
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when workloads are **not time-sensitive** and you want **lower API costs** in exchange for slower, less predictable response times and occasional capacity-related failures.\n\n**Good uses**\n- Offline data enrichment or classification\n- Model evaluations and test suites\n- Background report generation\n- Non-urgent coding or content jobs that can be retried\n\n**Concrete example:**  \nA team needs to classify 500,000 archived support tickets by topic overnight. Since no user is waiting for each response, the team can use Flex, add retry logic for capacity errors, and reduce processing costs.\n\n**Do not use Flex** for latency-sensitive or reliability-critical requests\u2014for example, a customer-facing chatbot where users expect immediate, consistent responses. Use **Standard processing** for those workloads.",
+        "latency": {
+          "authenticationMs": 421.9,
+          "requestToHeadersMs": 344.9,
+          "headersToFirstTokenMs": 4013.8,
+          "timeToFirstTokenMs": 4780.7,
+          "generationMs": 1940.0,
+          "totalMs": 6720.7
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 236,
+          "output_tokens_details": {
+            "reasoning_tokens": 72
+          },
+          "total_tokens": 271
+        },
+        "cost": {
+          "amount": 0.00243,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00236
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 236
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **non-urgent or asynchronous**.\n- Your team can tolerate **slower, variable response times**.\n- Jobs can be **retried** if capacity is temporarily unavailable.\n- Reducing inference cost matters more than predictable latency.\n\n**Concrete example:** A team runs nightly evaluations over 100,000 support conversations to score response quality. Results are not needed until the next morning, so the workers can use Flex, wait longer, and retry failed requests while lowering cost.\n\nUse **Standard processing** for interactive or time-sensitive features such as chat, real-time copilots, or synchronous API requests.\n\n**Reason not to use Flex:** It may have longer latency or occasional capacity-related failures, making it unsuitable when users expect fast, reliable responses.",
+        "latency": {
+          "authenticationMs": 419.9,
+          "requestToHeadersMs": 353.2,
+          "headersToFirstTokenMs": 1792.2,
+          "timeToFirstTokenMs": 2565.3,
+          "generationMs": 1626.6,
+          "totalMs": 4191.9
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 298,
+          "output_tokens_details": {
+            "reasoning_tokens": 132
+          },
+          "total_tokens": 333
+        },
+        "cost": {
+          "amount": 0.0122,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01192
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 298
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 7,
+      "capturedAt": "2026-10-02T08:34:11.960022+00:00",
+      "wallClockMs": 8755.1,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload is:\n\n- **Not latency-sensitive**\u2014minutes or variable response times are acceptable.\n- **Asynchronous or retryable**\u2014jobs can be queued and retried if capacity is temporarily unavailable.\n- **Cost-sensitive and high-volume**\u2014saving on processing matters more than predictable speed.\n\n**Example:** A team generating summaries and metadata overnight for 500,000 archived support tickets could use Flex. The results are not needed immediately, and failed requests can be retried.\n\n**Do not use Flex** for interactive or time-critical features, such as a customer-facing chatbot, because Flex can have slower, less predictable response times and occasional resource-unavailable errors. Use **Standard processing** when users expect prompt, reliable responses.",
+        "latency": {
+          "authenticationMs": 474.5,
+          "requestToHeadersMs": 626.4,
+          "headersToFirstTokenMs": 1809.3,
+          "timeToFirstTokenMs": 2910.2,
+          "generationMs": 3275.0,
+          "totalMs": 6185.3
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 268,
+          "output_tokens_details": {
+            "reasoning_tokens": 110
+          },
+          "total_tokens": 303
+        },
+        "cost": {
+          "amount": 0.0055,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00536
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 268
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the work is **asynchronous, non-urgent, and cost-sensitive**. Flex requests cost less than Standard processing, but they may take longer and can occasionally fail with a resource-unavailable response when capacity is constrained.\n\n**Concrete example:** A team generating summaries for thousands of support tickets overnight can use Flex. The job can retry failed requests and finish within hours rather than seconds, so lower cost matters more than predictable latency.\n\n**Do not use Flex** for latency-sensitive or customer-facing flows\u2014such as a live chatbot\u2014because slower or temporarily unavailable requests could create noticeable delays. Use **Standard processing** when you need reliable, consistently fast responses.",
+        "latency": {
+          "authenticationMs": 473.6,
+          "requestToHeadersMs": 626.7,
+          "headersToFirstTokenMs": 2139.0,
+          "timeToFirstTokenMs": 3239.4,
+          "generationMs": 1832.2,
+          "totalMs": 5071.6
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 256,
+          "output_tokens_details": {
+            "reasoning_tokens": 114
+          },
+          "total_tokens": 291
+        },
+        "cost": {
+          "amount": 0.00263,
+          "components": {
+            "input": 7e-05,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00256
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 256
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the work is:\n\n- **Asynchronous or delay-tolerant**\n- **Cost-sensitive**\n- Able to handle **slower response times or occasional capacity-related failures/retries**\n\n**Example:** A team runs an overnight job that summarizes 100,000 support tickets for analytics. Results are not needed until morning, so Flex can reduce processing costs without affecting users.\n\nChoose **Standard processing** for interactive, production workloads where predictable latency and availability matter\u2014such as a customer-facing chatbot.\n\n**Reason not to use Flex:** It can be slower and may occasionally be unavailable due to limited capacity, making it unsuitable for real-time requests or strict deadlines.",
+        "latency": {
+          "authenticationMs": 471.4,
+          "requestToHeadersMs": 686.6,
+          "headersToFirstTokenMs": 3442.9,
+          "timeToFirstTokenMs": 4600.9,
+          "generationMs": 4153.9,
+          "totalMs": 8754.9
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 267,
+          "output_tokens_details": {
+            "reasoning_tokens": 126
+          },
+          "total_tokens": 302
+        },
+        "cost": {
+          "amount": 0.01096,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01068
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 267
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      }
+    },
+    {
+      "run": 8,
+      "capturedAt": "2026-10-02T08:34:18.540886+00:00",
+      "wallClockMs": 4569.6,
+      "standard": {
+        "ok": true,
+        "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "default",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** for workloads that are:\n\n- **Not latency-sensitive**\n- **Asynchronous or batch-based**\n- Able to tolerate occasional delays or temporary resource unavailability\n- Cost-sensitive enough to trade speed and predictability for lower processing costs\n\n**Example:** A team summarizes thousands of archived customer-support tickets overnight. Results are not needed immediately, and failed or delayed requests can be retried, so Flex is a good fit.\n\nUse **Standard processing** for interactive or time-sensitive features. **Do not use Flex** for something like a customer-facing chatbot, because variable response times or unavailable capacity could create a poor user experience.",
+        "latency": {
+          "authenticationMs": 501.1,
+          "requestToHeadersMs": 472.3,
+          "headersToFirstTokenMs": 1180.9,
+          "timeToFirstTokenMs": 2154.3,
+          "generationMs": 1549.1,
+          "totalMs": 3703.5
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 226,
+          "output_tokens_details": {
+            "reasoning_tokens": 92
+          },
+          "total_tokens": 261
+        },
+        "cost": {
+          "amount": 0.00466,
+          "components": {
+            "input": 0.00014,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00452
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 226
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "flex": {
+        "ok": true,
+        "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
+        "processedTier": "flex",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload is:\n\n- **Asynchronous or non-urgent**\n- Able to tolerate **slower or variable response times**\n- Easy to **retry** if capacity is temporarily unavailable\n- Cost-sensitive and processed at moderate or large scale\n\n**Example:** A team runs a nightly job that summarizes thousands of customer-support tickets for the next morning. Since results are not needed immediately, Flex can reduce processing cost without affecting users.\n\nUse **Standard processing** instead for interactive or deadline-sensitive requests. For example, do not use Flex for a customer-facing chatbot, because variable latency or temporary resource unavailability could create a poor user experience.",
+        "latency": {
+          "authenticationMs": 502.5,
+          "requestToHeadersMs": 515.5,
+          "headersToFirstTokenMs": 1888.8,
+          "timeToFirstTokenMs": 2906.7,
+          "generationMs": 1662.5,
+          "totalMs": 4569.3
         },
         "usage": {
           "input_tokens": 35,
@@ -99,17 +1188,17 @@
           },
           "output_tokens": 241,
           "output_tokens_details": {
-            "reasoning_tokens": 117
+            "reasoning_tokens": 103
           },
           "total_tokens": 276
         },
         "cost": {
-          "amount": 0.00496,
+          "amount": 0.00248,
           "components": {
-            "input": 0.00014,
+            "input": 7e-05,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.00482
+            "output": 0.00241
           },
           "billableTokens": {
             "input": 35,
@@ -121,20 +1210,21 @@
         "attempts": 1,
         "retryDelaysMs": []
       },
-      "flex": {
+      "priority": {
         "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or non-urgent**.\n- You can tolerate **longer or variable response times** and occasional resource unavailability.\n- Reducing processing cost matters more than predictable latency.\n\n**Example:** A team summarizing 100,000 support tickets overnight can use Flex. The job can retry failed requests and does not matter whether it finishes in one hour or several hours.\n\n**Do not use Flex** for latency-sensitive or production-critical requests\u2014such as a customer-facing chatbot\u2014because responses may be slower or temporarily unavailable. Use **Standard processing** when users expect timely, reliable responses.",
+        "outputText": "Choose **Flex processing** when the workload is **not time-sensitive** and your team prefers lower cost over predictable response speed. It fits asynchronous jobs that can tolerate slower responses or occasional resource unavailability, such as evaluations, data enrichment, or background report generation.\n\n**Example:** Run a nightly job that summarizes thousands of customer-support conversations for trend analysis. Results are only needed by the next morning, so Flex can reduce processing costs without affecting users.\n\n**Do not use Flex** for latency-sensitive, user-facing features\u2014such as a live chatbot\u2014because response times are less predictable. Use **Standard processing** when users or production systems need prompt, reliable completion.",
         "latency": {
-          "authenticationMs": 462.6,
-          "requestToHeadersMs": 25135.7,
-          "headersToFirstTokenMs": 1726.6,
-          "timeToFirstTokenMs": 27325.0,
-          "generationMs": 1827.7,
-          "totalMs": 29152.7
+          "authenticationMs": 496.8,
+          "requestToHeadersMs": 443.2,
+          "headersToFirstTokenMs": 1710.0,
+          "timeToFirstTokenMs": 2649.9,
+          "generationMs": 1743.7,
+          "totalMs": 4393.6
         },
         "usage": {
           "input_tokens": 35,
@@ -142,692 +1232,25 @@
             "cache_write_tokens": 0,
             "cached_tokens": 0
           },
-          "output_tokens": 240,
+          "output_tokens": 264,
           "output_tokens_details": {
-            "reasoning_tokens": 104
+            "reasoning_tokens": 126
           },
-          "total_tokens": 275
+          "total_tokens": 299
         },
         "cost": {
-          "amount": 0.00247,
+          "amount": 0.01084,
           "components": {
-            "input": 7e-05,
+            "input": 0.00028,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.0024
+            "output": 0.01056
           },
           "billableTokens": {
             "input": 35,
             "cachedInput": 0,
             "cacheWrite": 0,
-            "output": 240
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 2,
-      "capturedAt": "2026-09-29T10:24:40.584639+00:00",
-      "wallClockMs": 5293.2,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "A software team should choose **Flex processing** when:\n\n- The workload is **not latency-sensitive**\n- Jobs can tolerate **slower or variable response times**\n- The application can **retry occasional resource-unavailable errors**\n- Lower processing cost matters more than predictable responsiveness\n\n**Concrete example:** A team runs a nightly job that summarizes thousands of internal support tickets for next-day reporting. Since results are not needed immediately, Flex can reduce cost without affecting users.\n\n**Reason not to use Flex:** Avoid it for interactive or time-critical features\u2014such as a customer-facing chatbot\u2014because responses may be slower and capacity may occasionally be unavailable. Use **Standard processing** when consistent latency and availability are important.",
-        "latency": {
-          "authenticationMs": 501.4,
-          "requestToHeadersMs": 234.7,
-          "headersToFirstTokenMs": 2128.8,
-          "timeToFirstTokenMs": 2864.9,
-          "generationMs": 2428.1,
-          "totalMs": 5293.0
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 267,
-          "output_tokens_details": {
-            "reasoning_tokens": 122
-          },
-          "total_tokens": 302
-        },
-        "cost": {
-          "amount": 0.00548,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00534
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 267
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the workload is **non-urgent, asynchronous, and cost-sensitive**. Flex offers lower processing costs than Standard, but responses may be slower and capacity may occasionally be unavailable.\n\n**Concrete example:** A team generating nightly summaries for thousands of internal documents could use Flex. The job can run in the background, and it does not matter if completion takes longer or needs retries.\n\nUse **Standard processing** for interactive or time-sensitive features, such as a customer-support chatbot.\n\n**Reason not to use Flex:** Its variable latency and possible resource-unavailable errors make it unsuitable when users expect immediate, predictable responses.",
-        "latency": {
-          "authenticationMs": 503.9,
-          "requestToHeadersMs": 598.4,
-          "headersToFirstTokenMs": 1830.9,
-          "timeToFirstTokenMs": 2933.1,
-          "generationMs": 1843.7,
-          "totalMs": 4776.9
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 240,
-          "output_tokens_details": {
-            "reasoning_tokens": 108
-          },
-          "total_tokens": 275
-        },
-        "cost": {
-          "amount": 0.00247,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.0024
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 240
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 3,
-      "capturedAt": "2026-09-29T10:24:54.685011+00:00",
-      "wallClockMs": 12090.8,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when a workload is:\n\n- **Not latency-sensitive**\n- **Asynchronous or deferrable**\n- **Cost-sensitive**\n- Able to tolerate **slower responses and occasional resource unavailability**\n\n**Example:** A team runs nightly classification of support tickets to identify topics and trends. Results are not needed until the next morning, so using Flex can reduce processing costs without affecting users.\n\nUse **Standard processing** for interactive or time-critical production traffic, such as a customer-facing chatbot. **Do not use Flex** there because variable latency or temporary capacity errors could create slow or failed user requests.",
-        "latency": {
-          "authenticationMs": 485.0,
-          "requestToHeadersMs": 624.4,
-          "headersToFirstTokenMs": 8691.1,
-          "timeToFirstTokenMs": 9800.6,
-          "generationMs": 2289.5,
-          "totalMs": 12090.1
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 272,
-          "output_tokens_details": {
-            "reasoning_tokens": 143
-          },
-          "total_tokens": 307
-        },
-        "cost": {
-          "amount": 0.00558,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00544
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 272
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when your workload:\n\n- Is **not time-sensitive** and can tolerate slower or variable response times.\n- Can handle occasional resource unavailability or retries.\n- Benefits more from **lower cost** than predictable latency.\n- Runs in the background, such as evaluations, data enrichment, summarization, or offline content generation.\n\n**Concrete example:**  \nA team generates summaries for 100,000 archived support tickets overnight. Users are not waiting for the results, so the team can use Flex processing, retry failed requests, and reduce costs.\n\nUse **Standard processing** for interactive or production-critical requests where users expect prompt, reliable responses\u2014for example, a customer-support chatbot.\n\n**One reason not to use Flex:** its latency and availability are less predictable, so it is a poor fit for real-time user-facing features or jobs with strict deadlines.",
-        "latency": {
-          "authenticationMs": 484.0,
-          "requestToHeadersMs": 256.2,
-          "headersToFirstTokenMs": 1202.7,
-          "timeToFirstTokenMs": 1943.0,
-          "generationMs": 2190.4,
-          "totalMs": 4133.3
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 238,
-          "output_tokens_details": {
-            "reasoning_tokens": 61
-          },
-          "total_tokens": 273
-        },
-        "cost": {
-          "amount": 0.00245,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00238
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 238
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 4,
-      "capturedAt": "2026-09-29T10:25:10.577851+00:00",
-      "wallClockMs": 13884.9,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the workload is **asynchronous, non-urgent, and cost-sensitive**, and your system can tolerate slower responses or occasional temporary unavailability. Typical uses include batch jobs, offline evaluations, data enrichment, and generating reports overnight.\n\n**Example:** A team needs to summarize 500,000 archived support tickets for an internal analytics project. The job can run in the background and finish over several hours, so Flex reduces processing cost without affecting users.\n\nUse **Standard processing** for interactive or time-sensitive features such as chatbots, coding assistants, or request-time content generation.\n\n**Reason not to use Flex:** It can have higher or less predictable latency\u2014and may temporarily lack capacity\u2014so it is unsuitable when users expect immediate, reliable responses.",
-        "latency": {
-          "authenticationMs": 602.3,
-          "requestToHeadersMs": 441.3,
-          "headersToFirstTokenMs": 3976.1,
-          "timeToFirstTokenMs": 5019.7,
-          "generationMs": 2417.5,
-          "totalMs": 7437.2
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 225,
-          "output_tokens_details": {
-            "reasoning_tokens": 67
-          },
-          "total_tokens": 260
-        },
-        "cost": {
-          "amount": 0.00464,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.0045
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 225
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or non-urgent**.\n- You can tolerate **slower or variable response times**.\n- Your application can **retry requests** if capacity is temporarily unavailable.\n- Reducing processing cost is more important than predictable latency.\n\n**Example:** A team runs a nightly job that summarizes thousands of customer-support conversations for internal analytics. Results are not needed until the next morning, so Flex can lower costs without affecting users.\n\nUse **Standard processing** for interactive or time-sensitive workloads, such as chat assistants, live code completion, or requests on a customer-facing page.\n\n**Reason not to use Flex:** It may have longer latency or return capacity-related errors during busy periods, making it unsuitable when users expect immediate, reliable responses.",
-        "latency": {
-          "authenticationMs": 605.5,
-          "requestToHeadersMs": 1459.7,
-          "headersToFirstTokenMs": 9729.7,
-          "timeToFirstTokenMs": 11794.9,
-          "generationMs": 2089.8,
-          "totalMs": 13884.7
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 259,
-          "output_tokens_details": {
-            "reasoning_tokens": 95
-          },
-          "total_tokens": 294
-        },
-        "cost": {
-          "amount": 0.00266,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00259
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 259
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 5,
-      "capturedAt": "2026-09-29T10:25:18.344845+00:00",
-      "wallClockMs": 5761.4,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "A software team should choose **Flex processing** when:\n\n- Workloads are **asynchronous or batch-oriented**\n- Response time is flexible\u2014minutes rather than immediate\n- Occasional resource unavailability or retries are acceptable\n- Reducing API cost is more important than predictable latency\n\n**Concrete example:** A team summarizes thousands of archived support tickets overnight to identify common issues. Since results are not needed immediately, Flex can lower processing costs without affecting users.\n\n**Do not use Flex** for latency-sensitive production features\u2014such as a live customer-support chatbot\u2014because processing may be slower or temporarily unavailable. Use **Standard processing** when users expect fast, reliable responses.",
-        "latency": {
-          "authenticationMs": 646.7,
-          "requestToHeadersMs": 242.7,
-          "headersToFirstTokenMs": 1297.4,
-          "timeToFirstTokenMs": 2186.9,
-          "generationMs": 2214.1,
-          "totalMs": 4401.0
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 209,
-          "output_tokens_details": {
-            "reasoning_tokens": 71
-          },
-          "total_tokens": 244
-        },
-        "cost": {
-          "amount": 0.00432,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00418
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 209
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- The workload is **not time-sensitive**.\n- Your system can tolerate **slower or variable response times**.\n- You can implement **retries** for occasional capacity-related failures.\n- Lower processing cost matters more than predictable latency.\n\n**Example:** A team runs an overnight job that classifies and summarizes thousands of customer-support tickets for next-day analytics. Since results are not needed immediately, Flex can reduce costs without affecting users.\n\n**Do not use Flex** for latency-sensitive or highly reliable production paths\u2014such as a live customer-support chatbot\u2014because responses may be delayed or temporarily unavailable. Use **Standard processing** when users are waiting or predictable performance is important.",
-        "latency": {
-          "authenticationMs": 647.9,
-          "requestToHeadersMs": 663.5,
-          "headersToFirstTokenMs": 2280.0,
-          "timeToFirstTokenMs": 3591.4,
-          "generationMs": 2169.7,
-          "totalMs": 5761.1
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 279,
-          "output_tokens_details": {
-            "reasoning_tokens": 132
-          },
-          "total_tokens": 314
-        },
-        "cost": {
-          "amount": 0.00286,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00279
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 279
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 6,
-      "capturedAt": "2026-09-29T10:25:25.537982+00:00",
-      "wallClockMs": 5185.8,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- The workload is **not latency-sensitive**.\n- You can tolerate **slower responses or occasional resource-unavailable errors** and retry them.\n- **Lower processing cost** matters more than predictable speed.\n- Jobs can run in the background, such as evaluations, data enrichment, summarization, or offline content generation.\n\n**Example:** A team needs to summarize 500,000 archived support tickets overnight. Since no user is waiting for each response and failed requests can be retried, Flex can reduce costs compared with Standard processing.\n\nChoose **Standard processing** for interactive or time-sensitive production traffic, such as a customer-facing chatbot.\n\n**One reason not to use Flex:** Its latency and availability are less predictable, so it can lead to slow or failed requests during periods of high demand.",
-        "latency": {
-          "authenticationMs": 412.4,
-          "requestToHeadersMs": 299.4,
-          "headersToFirstTokenMs": 2295.4,
-          "timeToFirstTokenMs": 3007.1,
-          "generationMs": 2178.5,
-          "totalMs": 5185.7
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 282,
-          "output_tokens_details": {
-            "reasoning_tokens": 112
-          },
-          "total_tokens": 317
-        },
-        "cost": {
-          "amount": 0.00578,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00564
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 282
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when a workload is:\n\n- **Asynchronous or non-urgent**\n- **Cost-sensitive**\n- Able to tolerate **slower or variable response times**\n- Able to retry if capacity is temporarily unavailable\n\n**Concrete example:** A team generating summaries for 500,000 archived support tickets overnight could use Flex. The job does not need immediate responses, so lower processing costs are more valuable than predictable latency.\n\nUse **Standard processing** for interactive or time-sensitive features such as chat assistants, live code completion, or requests on a user-facing page.\n\n**Reason not to use Flex:** It can have higher latency and occasional resource-unavailable errors, making it unsuitable when users expect fast, reliable responses or when a job has a strict deadline.",
-        "latency": {
-          "authenticationMs": 413.5,
-          "requestToHeadersMs": 476.7,
-          "headersToFirstTokenMs": 1988.2,
-          "timeToFirstTokenMs": 2878.3,
-          "generationMs": 2102.2,
-          "totalMs": 4980.5
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 245,
-          "output_tokens_details": {
-            "reasoning_tokens": 87
-          },
-          "total_tokens": 280
-        },
-        "cost": {
-          "amount": 0.00252,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00245
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 245
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      }
-    },
-    {
-      "run": 7,
-      "capturedAt": "2026-09-29T10:25:51.503442+00:00",
-      "wallClockMs": 23956.7,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the work is:\n\n- **Not latency-sensitive** and can tolerate slower or variable response times\n- **Asynchronous or batch-oriented**\n- **Cost-sensitive**, where lower processing cost matters more than speed\n- Able to handle occasional **resource-unavailable errors** with retries\n\n**Example:** A team runs thousands of document summaries overnight for an internal search index. Since results are not needed immediately, Flex can reduce costs without affecting users.\n\nUse **Standard processing** for interactive or time-sensitive workloads, such as a customer-facing chatbot or real-time coding assistant.\n\n**Reason not to use Flex:** It offers less predictable availability and latency, so requests may take longer or require retrying\u2014making it unsuitable for strict response-time requirements.",
-        "latency": {
-          "authenticationMs": 491.1,
-          "requestToHeadersMs": 626.2,
-          "headersToFirstTokenMs": 15962.0,
-          "timeToFirstTokenMs": 17079.2,
-          "generationMs": 2675.5,
-          "totalMs": 19754.8
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 239,
-          "output_tokens_details": {
-            "reasoning_tokens": 82
-          },
-          "total_tokens": 274
-        },
-        "cost": {
-          "amount": 0.00492,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00478
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 239
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the workload is **non-urgent, asynchronous, and cost-sensitive**. Flex offers lower prices than Standard processing, but requests may take longer and can occasionally fail due to unavailable capacity.\n\n**Example:** A team generating summaries for 500,000 archived support tickets overnight could use Flex. The job can tolerate variable latency, retry failed requests, and finish later in exchange for lower cost.\n\nUse **Standard processing** for interactive or time-sensitive workloads, such as a customer-facing chatbot or real-time coding assistant.\n\n**Reason not to use Flex:** It does not provide the predictable latency and availability needed for user-facing requests or jobs with strict completion deadlines.",
-        "latency": {
-          "authenticationMs": 550.6,
-          "requestToHeadersMs": 324.0,
-          "headersToFirstTokenMs": 1789.2,
-          "timeToFirstTokenMs": 2663.8,
-          "generationMs": 1862.7,
-          "totalMs": 4526.5
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 263,
-          "output_tokens_details": {
-            "reasoning_tokens": 122
-          },
-          "total_tokens": 298
-        },
-        "cost": {
-          "amount": 0.0027,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00263
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 263
-          }
-        },
-        "attempts": 2,
-        "retryDelaysMs": [
-          1091
-        ]
-      }
-    },
-    {
-      "run": 8,
-      "capturedAt": "2026-09-29T10:26:10.465483+00:00",
-      "wallClockMs": 16956.9,
-      "standard": {
-        "ok": true,
-        "requestedTier": "default",
-        "processedTier": "default",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- Workloads are **not time-sensitive**\n- You can tolerate **slower or variable response times**\n- Jobs can be **retried** if capacity is temporarily unavailable\n- Lower processing cost matters more than consistent latency\n\n**Example:** A team classifying and summarizing thousands of archived customer-support tickets overnight could use Flex. Results are not needed immediately, so slower processing is acceptable in exchange for lower cost.\n\nUse **Standard processing** for interactive or latency-sensitive features, such as a customer-facing chatbot.\n\n**Reason not to use Flex:** Capacity and response times are less predictable, so it can create delays or temporary failures in real-time user workflows.",
-        "latency": {
-          "authenticationMs": 490.1,
-          "requestToHeadersMs": 9834.3,
-          "headersToFirstTokenMs": 4256.3,
-          "timeToFirstTokenMs": 14580.6,
-          "generationMs": 2376.1,
-          "totalMs": 16956.7
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 274,
-          "output_tokens_details": {
-            "reasoning_tokens": 130
-          },
-          "total_tokens": 309
-        },
-        "cost": {
-          "amount": 0.00562,
-          "components": {
-            "input": 0.00014,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00548
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 274
-          }
-        },
-        "attempts": 1,
-        "retryDelaysMs": []
-      },
-      "flex": {
-        "ok": true,
-        "requestedTier": "flex",
-        "processedTier": "flex",
-        "status": "completed",
-        "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- Work is **not latency-sensitive** and can tolerate slower or variable response times.\n- Jobs can be **retried or queued** if capacity is temporarily unavailable.\n- Reducing inference cost matters more than predictable performance.\n\n**Example:** A team runs a nightly job that summarizes thousands of internal support tickets for trend analysis. The results are only needed by morning, so Flex is a good fit.\n\nUse **Standard processing** for interactive or time-critical workloads. For example, don\u2019t use Flex for a customer-facing chatbot where users expect immediate responses, because Flex may have higher latency or temporary capacity unavailability.",
-        "latency": {
-          "authenticationMs": 493.5,
-          "requestToHeadersMs": 504.1,
-          "headersToFirstTokenMs": 1441.3,
-          "timeToFirstTokenMs": 2438.9,
-          "generationMs": 1948.8,
-          "totalMs": 4387.7
-        },
-        "usage": {
-          "input_tokens": 35,
-          "input_tokens_details": {
-            "cache_write_tokens": 0,
-            "cached_tokens": 0
-          },
-          "output_tokens": 225,
-          "output_tokens_details": {
-            "reasoning_tokens": 91
-          },
-          "total_tokens": 260
-        },
-        "cost": {
-          "amount": 0.00232,
-          "components": {
-            "input": 7e-05,
-            "cachedInput": 0.0,
-            "cacheWrite": 0.0,
-            "output": 0.00225
-          },
-          "billableTokens": {
-            "input": 35,
-            "cachedInput": 0,
-            "cacheWrite": 0,
-            "output": 225
+            "output": 264
           }
         },
         "attempts": 1,
@@ -836,22 +1259,23 @@
     },
     {
       "run": 9,
-      "capturedAt": "2026-09-29T10:26:32.683880+00:00",
-      "wallClockMs": 20212.4,
+      "capturedAt": "2026-10-02T08:34:24.963354+00:00",
+      "wallClockMs": 4410.3,
       "standard": {
         "ok": true,
         "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
         "processedTier": "default",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when a workload is **not time-sensitive** and you can trade slower or less predictable response times for lower cost. It fits background jobs, evaluations, data enrichment, and other tasks that can be retried or queued.\n\n**Example:** A team classifies 500,000 historical customer-support tickets overnight to identify common topics. Since results are not needed immediately, Flex can reduce processing cost without affecting users.\n\n**Do not use Flex** for interactive or latency-sensitive features\u2014such as a customer-facing chatbot\u2014because requests may take longer or encounter temporary capacity unavailability. Use **Standard processing** when users or production systems need timely, predictable responses.",
+        "outputText": "Choose **Flex processing** when:\n\n- The work is **non-urgent or asynchronous**.\n- You can tolerate **slower, variable response times**.\n- Your application can **retry requests** if capacity is temporarily unavailable.\n- Reducing processing cost matters more than predictable latency.\n\n**Concrete example:** A software team generates summaries and tags for thousands of archived support tickets overnight. Users are not waiting for results, so the job can use Flex processing, queue retries, and finish whenever capacity is available.\n\nUse **Standard processing** for interactive or time-sensitive features, such as a customer-facing chatbot or real-time coding assistant.\n\n**One reason not to use Flex:** It does not provide consistently low latency or guaranteed availability; requests may be delayed or receive capacity-related errors, making it unsuitable for synchronous user experiences.",
         "latency": {
-          "authenticationMs": 865.5,
-          "requestToHeadersMs": 969.8,
-          "headersToFirstTokenMs": 16050.4,
-          "timeToFirstTokenMs": 17885.7,
-          "generationMs": 2326.5,
-          "totalMs": 20212.2
+          "authenticationMs": 479.3,
+          "requestToHeadersMs": 269.9,
+          "headersToFirstTokenMs": 1159.4,
+          "timeToFirstTokenMs": 1908.5,
+          "generationMs": 1890.0,
+          "totalMs": 3798.5
         },
         "usage": {
           "input_tokens": 35,
@@ -859,25 +1283,25 @@
             "cache_write_tokens": 0,
             "cached_tokens": 0
           },
-          "output_tokens": 235,
+          "output_tokens": 252,
           "output_tokens_details": {
-            "reasoning_tokens": 95
+            "reasoning_tokens": 84
           },
-          "total_tokens": 270
+          "total_tokens": 287
         },
         "cost": {
-          "amount": 0.00484,
+          "amount": 0.00518,
           "components": {
             "input": 0.00014,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.0047
+            "output": 0.00504
           },
           "billableTokens": {
             "input": 35,
             "cachedInput": 0,
             "cacheWrite": 0,
-            "output": 235
+            "output": 252
           }
         },
         "attempts": 1,
@@ -886,17 +1310,18 @@
       "flex": {
         "ok": true,
         "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
         "processedTier": "flex",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "A software team should choose **Flex processing** when:\n\n- The work is **asynchronous or non-urgent**\n- Lower cost matters more than predictable response time\n- The system can tolerate **slower responses or temporary resource unavailability**\n- Jobs can be retried safely\n\n**Concrete example:** An e-commerce company needs to classify and summarize 500,000 product descriptions overnight. Since no user is waiting for each result, the team can use Flex processing to reduce costs and retry any jobs that are temporarily unavailable.\n\nUse **Standard processing** for interactive, latency-sensitive workloads such as chatbots, real-time search, or customer-facing API calls.\n\n**Reason not to use Flex:** It does not provide the same latency and availability expectations as Standard processing, so it is a poor fit when users need immediate, predictable responses.",
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **not time-sensitive**.\n- You want **lower processing costs**.\n- Your system can tolerate **slower or variable response times** and occasional resource unavailability.\n- Jobs can be retried or queued, such as evaluations, data enrichment, offline analysis, or background content generation.\n\n**Example:** A team generates summaries for 100,000 archived support tickets overnight. Users are not waiting for the results, so using Flex reduces cost, and the pipeline can retry requests that are delayed or temporarily unavailable.\n\n**Do not use Flex** for interactive or latency-sensitive production features\u2014such as a customer-facing chatbot\u2014because responses may be slower or resources may be unavailable. Use **Standard processing** when predictable latency and availability matter.",
         "latency": {
-          "authenticationMs": 862.8,
-          "requestToHeadersMs": 708.5,
-          "headersToFirstTokenMs": 8316.8,
-          "timeToFirstTokenMs": 9888.1,
-          "generationMs": 1956.4,
-          "totalMs": 11844.5
+          "authenticationMs": 479.9,
+          "requestToHeadersMs": 451.7,
+          "headersToFirstTokenMs": 1818.1,
+          "timeToFirstTokenMs": 2749.8,
+          "generationMs": 1660.2,
+          "totalMs": 4409.9
         },
         "usage": {
           "input_tokens": 35,
@@ -904,25 +1329,71 @@
             "cache_write_tokens": 0,
             "cached_tokens": 0
           },
-          "output_tokens": 315,
+          "output_tokens": 252,
           "output_tokens_details": {
-            "reasoning_tokens": 144
+            "reasoning_tokens": 89
           },
-          "total_tokens": 350
+          "total_tokens": 287
         },
         "cost": {
-          "amount": 0.00322,
+          "amount": 0.00259,
           "components": {
             "input": 7e-05,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.00315
+            "output": 0.00252
           },
           "billableTokens": {
             "input": 35,
             "cachedInput": 0,
             "cacheWrite": 0,
-            "output": 315
+            "output": 252
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when the workload:\n\n- Is **not latency-sensitive**\n- Can tolerate **slower or variable response times**\n- Can be retried if capacity is temporarily unavailable\n- Benefits more from **lower cost** than predictable speed\n\n**Example:** A team summarizing thousands of archived customer-support tickets overnight could use Flex. The job can run in the background, and completing later is acceptable.\n\nUse **Standard processing** for interactive or time-sensitive features, such as a customer-facing chatbot or real-time coding assistant.\n\n**Reason not to use Flex:** It does not provide the same predictable latency or availability as Standard, so it can create poor user experiences or missed deadlines in synchronous production workflows.",
+        "latency": {
+          "authenticationMs": 462.6,
+          "requestToHeadersMs": 314.3,
+          "headersToFirstTokenMs": 1209.2,
+          "timeToFirstTokenMs": 1986.2,
+          "generationMs": 1614.8,
+          "totalMs": 3601.0
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 217,
+          "output_tokens_details": {
+            "reasoning_tokens": 70
+          },
+          "total_tokens": 252
+        },
+        "cost": {
+          "amount": 0.00896,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.00868
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 217
           }
         },
         "attempts": 1,
@@ -931,22 +1402,23 @@
     },
     {
       "run": 10,
-      "capturedAt": "2026-09-29T10:26:46.471480+00:00",
-      "wallClockMs": 11779.6,
+      "capturedAt": "2026-10-02T08:34:32.296535+00:00",
+      "wallClockMs": 5324.5,
       "standard": {
         "ok": true,
         "requestedTier": "default",
+        "deployment": "gpt-5.6-sol",
         "processedTier": "default",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or non-urgent**\n- You can tolerate **slower or variable response times**\n- Occasional **resource-unavailable errors** can be retried\n- Reducing processing cost matters more than predictable latency\n\n**Concrete example:** A team runs nightly evaluations over 100,000 customer-support transcripts. Results are not needed until the next morning, so it can use Flex processing with retries to lower costs.\n\n**Reason not to use Flex:** Avoid it for latency-sensitive, user-facing requests\u2014such as a live chatbot\u2014because responses may take longer or temporarily fail due to unavailable capacity. Use **Standard processing** when users expect prompt, reliable responses.",
+        "outputText": "Choose **Flex processing** when a workload is **not time-sensitive** and the team prefers **lower cost over predictable response speed**. It fits batch jobs, offline evaluations, data enrichment, and background processing where requests can take longer or occasionally fail because capacity is unavailable.\n\n**Example:** A team summarizes 500,000 archived support tickets overnight. The summaries are not needed until the next day, so using Flex can reduce processing costs without affecting users.\n\nUse **Standard processing** for interactive or production-critical requests, such as a customer-facing chatbot.\n\n**Reason not to use Flex:** Latency and capacity are less predictable, so it is unsuitable when users expect immediate responses or when a job must finish within a strict deadline.",
         "latency": {
-          "authenticationMs": 506.5,
-          "requestToHeadersMs": 314.4,
-          "headersToFirstTokenMs": 1703.8,
-          "timeToFirstTokenMs": 2524.7,
-          "generationMs": 2049.9,
-          "totalMs": 4574.6
+          "authenticationMs": 542.5,
+          "requestToHeadersMs": 509.5,
+          "headersToFirstTokenMs": 1405.8,
+          "timeToFirstTokenMs": 2457.8,
+          "generationMs": 1693.2,
+          "totalMs": 4151.0
         },
         "usage": {
           "input_tokens": 35,
@@ -954,25 +1426,25 @@
             "cache_write_tokens": 0,
             "cached_tokens": 0
           },
-          "output_tokens": 278,
+          "output_tokens": 247,
           "output_tokens_details": {
-            "reasoning_tokens": 128
+            "reasoning_tokens": 97
           },
-          "total_tokens": 313
+          "total_tokens": 282
         },
         "cost": {
-          "amount": 0.0057,
+          "amount": 0.00508,
           "components": {
             "input": 0.00014,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.00556
+            "output": 0.00494
           },
           "billableTokens": {
             "input": 35,
             "cachedInput": 0,
             "cacheWrite": 0,
-            "output": 278
+            "output": 247
           }
         },
         "attempts": 1,
@@ -981,17 +1453,18 @@
       "flex": {
         "ok": true,
         "requestedTier": "flex",
+        "deployment": "gpt-5.6-sol",
         "processedTier": "flex",
         "status": "completed",
         "incompleteReason": null,
-        "outputText": "Choose **Flex processing** when the workload is **non-urgent, fault-tolerant, and cost-sensitive**. Flex offers lower pricing in exchange for slower, less predictable response times and possible temporary resource unavailability. Your system should support retries and avoid assuming immediate completion.\n\nUse **Standard processing** for interactive or production-critical requests where users expect consistent latency and availability.\n\n**Example:** A team runs nightly analysis of thousands of support tickets to classify topics and generate summaries. Since results are not needed until the next morning, Flex can reduce costs without affecting users.\n\n**Reason not to use Flex:** Avoid it for latency-sensitive features\u2014such as a live customer-support chatbot\u2014because delayed or unavailable processing would directly degrade the user experience.",
+        "outputText": "A software team should choose **Flex processing** when:\n\n- The workload is **not time-sensitive**.\n- Requests can tolerate **slower or variable response times**.\n- The team wants to **reduce API costs**.\n- Jobs can be retried if capacity is temporarily unavailable.\n\n**Concrete example:** A team runs a nightly job that classifies thousands of support tickets and adds tags for reporting. Since results are only needed by the next morning, Flex is a good fit.\n\nUse **Standard processing** for interactive or production-critical requests where predictable latency and availability matter.\n\n**Reason not to use Flex:** It can be slower and may occasionally return capacity-related errors, so it is a poor choice for a customer-facing chatbot that users expect to answer immediately.",
         "latency": {
-          "authenticationMs": 507.6,
-          "requestToHeadersMs": 947.2,
-          "headersToFirstTokenMs": 8122.0,
-          "timeToFirstTokenMs": 9576.9,
-          "generationMs": 2202.6,
-          "totalMs": 11779.5
+          "authenticationMs": 536.9,
+          "requestToHeadersMs": 201.0,
+          "headersToFirstTokenMs": 2895.7,
+          "timeToFirstTokenMs": 3633.6,
+          "generationMs": 1690.6,
+          "totalMs": 5324.2
         },
         "usage": {
           "input_tokens": 35,
@@ -999,25 +1472,71 @@
             "cache_write_tokens": 0,
             "cached_tokens": 0
           },
-          "output_tokens": 298,
+          "output_tokens": 335,
           "output_tokens_details": {
-            "reasoning_tokens": 146
+            "reasoning_tokens": 178
           },
-          "total_tokens": 333
+          "total_tokens": 370
         },
         "cost": {
-          "amount": 0.00305,
+          "amount": 0.00342,
           "components": {
             "input": 7e-05,
             "cachedInput": 0.0,
             "cacheWrite": 0.0,
-            "output": 0.00298
+            "output": 0.00335
           },
           "billableTokens": {
             "input": 35,
             "cachedInput": 0,
             "cacheWrite": 0,
-            "output": 298
+            "output": 335
+          }
+        },
+        "attempts": 1,
+        "retryDelaysMs": []
+      },
+      "priority": {
+        "ok": true,
+        "requestedTier": "priority",
+        "deployment": "gpt-5.6-sol-priority",
+        "processedTier": "priority",
+        "status": "completed",
+        "incompleteReason": null,
+        "outputText": "Choose **Flex processing** when:\n\n- The workload is **asynchronous or batch-oriented**.\n- Saving money matters more than response speed.\n- You can tolerate **longer, variable latency** and occasional temporary resource-unavailable errors.\n- Your system can retry failed requests.\n\n**Example:** An engineering team summarizes and classifies yesterday\u2019s application logs overnight. The results are not needed until morning, so Flex can reduce processing costs without affecting users.\n\nUse **Standard processing** for latency-sensitive, user-facing requests.\n\n**Reason not to use Flex:** It is a poor fit for an interactive chatbot or real-time feature because slower or inconsistent response times can create a bad user experience.",
+        "latency": {
+          "authenticationMs": 544.7,
+          "requestToHeadersMs": 489.4,
+          "headersToFirstTokenMs": 1960.7,
+          "timeToFirstTokenMs": 2994.9,
+          "generationMs": 1439.2,
+          "totalMs": 4434.1
+        },
+        "usage": {
+          "input_tokens": 35,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 256,
+          "output_tokens_details": {
+            "reasoning_tokens": 115
+          },
+          "total_tokens": 291
+        },
+        "cost": {
+          "amount": 0.01052,
+          "components": {
+            "input": 0.00028,
+            "cachedInput": 0.0,
+            "cacheWrite": 0.0,
+            "output": 0.01024
+          },
+          "billableTokens": {
+            "input": 35,
+            "cachedInput": 0,
+            "cacheWrite": 0,
+            "output": 256
           }
         },
         "attempts": 1,

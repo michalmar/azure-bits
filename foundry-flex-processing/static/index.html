@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Flex processing race | Microsoft Foundry</title>
+    <title>Processing tier comparison | Microsoft Foundry</title>
     <link rel="stylesheet" href="/static/tokens.css" />
     <link rel="stylesheet" href="/static/baseline.css" />
     <link rel="stylesheet" href="/static/styles.css" />
@@ -14,7 +14,7 @@
         <a class="demo-brand" href="/" aria-label="Flex processing demo home">
           <span class="demo-brand__family">Microsoft Foundry</span>
           <span class="demo-brand__divider" aria-hidden="true"></span>
-          <span>Flex processing</span>
+          <span>Processing tiers</span>
         </a>
         <nav class="demo-nav" aria-label="Demo views">
           <button class="demo-nav__item is-active" type="button" data-view-target="playground">Playground</button>
@@ -29,14 +29,14 @@
 
       <main class="demo-main" id="playgroundView" data-view="playground">
         <div class="demo-page-head">
-          <h1>Same model. Two queues.</h1>
+          <h1>Same model. Three queues.</h1>
           <p class="demo-lead">
-            Send one prompt to GPT-5.6 Sol in parallel through Standard and Flex processing.
+            Send one prompt to GPT-5.6 Sol in parallel through Standard, Flex, and Priority processing.
             Compare the full responses, latency phases, token use, and estimated cost.
           </p>
           <p class="demo-support">
-            Flex uses the same Global Standard deployment and model quality. It trades predictable
-            latency and availability for a documented 50% token-rate discount.
+            Flex trades predictable latency and availability for lower cost. Priority uses a
+            Priority-enabled deployment for lower and more consistent latency at a higher token rate.
           </p>
         </div>
 
@@ -52,6 +52,10 @@
           <div>
             <span class="price-tape__label">Flex · input / output</span>
             <strong id="flexPrice">—</strong>
+          </div>
+          <div>
+            <span class="price-tape__label">Priority · input / output</span>
+            <strong id="priorityPrice">—</strong>
           </div>
           <a id="pricingLink" href="https://azure.microsoft.com/pricing/details/azure-openai/" target="_blank" rel="noopener noreferrer">
             Verify pricing
@@ -70,7 +74,7 @@
                 maxlength="12000"
               >Explain in practical terms when a software team should choose Flex processing instead of Standard processing. Include one concrete example and one reason not to use Flex.</textarea>
               <span class="demo-field__hint">
-                Both requests start together and use identical input and output limits.
+                All three requests start together and use identical input and output limits.
               </span>
             </label>
 
@@ -86,7 +90,7 @@
               Checking the configured deployment…
             </p>
             <p class="demo-field__hint">
-              Each run creates two billable model requests. A single run is a point observation,
+              Each run creates three billable model requests. A single run is a point observation,
               not a latency SLA or statistically meaningful benchmark.
             </p>
           </form>
@@ -95,7 +99,7 @@
             <div class="results-heading">
               <div>
                 <h2 id="resultsHeading">Parallel result</h2>
-                <p id="resultSummary">Run a prompt to compare both processing paths.</p>
+                <p id="resultSummary">Run a prompt to compare all three processing paths.</p>
               </div>
               <span class="model-name" id="modelName">gpt-5.6-sol</span>
             </div>
@@ -138,6 +142,25 @@
                 </div>
                 <p class="lane-error" id="flexError" hidden></p>
               </article>
+
+              <article class="race-lane" data-tier="priority">
+                <header class="race-lane__header">
+                  <div>
+                    <span class="race-lane__marker" aria-hidden="true">P</span>
+                    <div>
+                      <h3>Priority</h3>
+                      <p>Low-latency pay-as-you-go processing</p>
+                    </div>
+                  </div>
+                  <strong class="race-lane__total" id="priorityTotal">—</strong>
+                </header>
+                <div class="latency-track" id="priorityTrack" aria-label="Priority latency phases"></div>
+                <dl class="metric-grid" id="priorityMetrics"></dl>
+                <div class="response-copy" id="priorityResponse">
+                  <p>Priority response will appear here.</p>
+                </div>
+                <p class="lane-error" id="priorityError" hidden></p>
+              </article>
             </div>
 
             <div class="track-legend" aria-label="Latency phase legend">
@@ -156,11 +179,12 @@
             headers, headers-to-first text token, text generation, and total elapsed time. Cost uses
             the response's regular input, cached input, cache-write, and output token counts against
             current Global short-context retail meters. Network conditions, connection reuse, shared
-            quota, and temporary Flex capacity all affect an individual run.
+            quota, temporary Flex capacity, and Priority ramp-rate or downgrade behavior all affect a run.
           </p>
-          <a href="https://learn.microsoft.com/azure/foundry/openai/how-to/flex-processing" target="_blank" rel="noopener noreferrer">
-            Read the Flex processing guide
-          </a>
+          <div class="method-links">
+            <a href="https://learn.microsoft.com/azure/foundry/openai/how-to/flex-processing" target="_blank" rel="noopener noreferrer">Flex processing guide</a>
+            <a href="https://learn.microsoft.com/azure/foundry/openai/concepts/priority-processing" target="_blank" rel="noopener noreferrer">Priority processing guide</a>
+          </div>
         </section>
       </main>
 
@@ -168,7 +192,7 @@
         <div class="demo-page-head results-page-head">
           <h1>Ten runs, not one impression.</h1>
           <p class="demo-lead">
-            A fixed prompt was sent through Standard and Flex processing ten times. This static
+            A fixed prompt was sent through Standard, Flex, and Priority processing ten times. This static
             result set preserves every run and summarizes the observed distributions.
           </p>
           <p class="demo-support" id="resultsMethod">Loading the benchmark dataset…</p>
@@ -180,7 +204,7 @@
           <div class="results-heading">
             <div>
               <h2 id="individualRunsHeading">Individual runs</h2>
-              <p>Expand a run to inspect its token use, retries, and both generated responses.</p>
+              <p>Expand a run to inspect token use, retries, processed tiers, and all three responses.</p>
             </div>
             <span class="model-name" id="resultsModel">gpt-5.6-sol</span>
           </div>

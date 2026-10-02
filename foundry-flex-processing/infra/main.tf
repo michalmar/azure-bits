@@ -139,6 +139,7 @@ resource "azapi_resource" "container_app" {
               { name = "AZURE_CLIENT_ID", value = azurerm_user_assigned_identity.demo.client_id },
               { name = "AZURE_OPENAI_ENDPOINT", value = var.azure_openai_endpoint },
               { name = "AZURE_OPENAI_DEPLOYMENT", value = var.model_deployment },
+              { name = "AZURE_OPENAI_PRIORITY_DEPLOYMENT", value = var.priority_model_deployment },
               { name = "FLEX_REQUEST_TIMEOUT_SECONDS", value = "900" },
               { name = "DEFAULT_MAX_OUTPUT_TOKENS", value = "800" },
               { name = "MAX_TRANSIENT_ATTEMPTS", value = "3" },

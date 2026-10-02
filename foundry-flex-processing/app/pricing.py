@@ -10,7 +10,9 @@ import httpx
 
 from .config import (
     BUNDLED_STANDARD_PRICES,
+    BUNDLED_PRIORITY_PRICES,
     FLEX_GUIDE_URL,
+    PRIORITY_GUIDE_URL,
     PRICE_SKUS,
     PRICING_API_URL,
     PRICING_PAGE_URL,
@@ -36,7 +38,9 @@ class PricingCatalog:
         self._cached: dict[str, Any] | None = None
 
     def _url(self) -> str:
-        sku_filter = " or ".join(f"skuName eq '{sku}'" for sku in PRICE_SKUS.values())
+        sku_filter = " or ".join(
+            f"skuName eq '{sku}'" for tier in PRICE_SKUS.values() for sku in tier.values()
+        )
         query_filter = f"productName eq 'Azure OpenAI GPT5' and ({sku_filter})"
         encoded_filter = quote(query_filter, safe="()'$=,")
         return (
@@ -44,28 +48,33 @@ class PricingCatalog:
             f"&currencyCode={self.currency}&$filter={encoded_filter}"
         )
 
-    def _parse(self, payload: dict[str, Any]) -> dict[str, float]:
+    def _parse(self, payload: dict[str, Any]) -> dict[str, dict[str, float]]:
         items = payload.get("Items")
         if not isinstance(items, list):
             raise ValueError("Azure Retail Prices response did not include Items.")
-        prices: dict[str, float] = {}
-        for key, sku in PRICE_SKUS.items():
-            values = {
-                float(item["unitPrice"])
-                for item in items
-                if isinstance(item, dict)
-                and item.get("skuName") == sku
-                and item.get("currencyCode") == self.currency
-                and isinstance(item.get("unitPrice"), (int, float))
-            }
-            if len(values) != 1:
-                raise ValueError(f"Expected one unique {self.currency} price for {sku}; found {sorted(values)}.")
-            prices[key] = values.pop()
+        prices: dict[str, dict[str, float]] = {}
+        for tier, skus in PRICE_SKUS.items():
+            prices[tier] = {}
+            for key, sku in skus.items():
+                values = {
+                    float(item["unitPrice"])
+                    for item in items
+                    if isinstance(item, dict)
+                    and item.get("skuName") == sku
+                    and item.get("currencyCode") == self.currency
+                    and isinstance(item.get("unitPrice"), (int, float))
+                }
+                if len(values) != 1:
+                    raise ValueError(
+                        f"Expected one unique {self.currency} price for {sku}; found {sorted(values)}."
+                    )
+                prices[tier][key] = values.pop()
         return prices
 
     def _payload(
         self,
         standard: dict[str, float],
+        priority: dict[str, float],
         *,
         source: str,
         warning: str | None = None,
@@ -77,12 +86,14 @@ class PricingCatalog:
             "unit": "1M tokens",
             "standard": standard,
             "flex": flex,
+            "priority": priority,
             "flexMultiplier": FLEX_MULTIPLIER,
             "source": source,
             "retrievedAt": datetime.now(UTC).isoformat(),
             "retailApiUrl": PRICING_API_URL,
             "pricingPageUrl": PRICING_PAGE_URL,
             "flexGuideUrl": FLEX_GUIDE_URL,
+            "priorityGuideUrl": PRIORITY_GUIDE_URL,
             "meters": PRICE_SKUS,
         }
         if warning:
@@ -95,8 +106,12 @@ class PricingCatalog:
         try:
             response = await self.http.get(self._url(), timeout=30)
             response.raise_for_status()
-            standard = self._parse(response.json())
-            result = self._payload(standard, source="Azure Retail Prices API")
+            prices = self._parse(response.json())
+            result = self._payload(
+                prices["standard"],
+                prices["priority"],
+                source="Azure Retail Prices API",
+            )
         except (httpx.HTTPError, ValueError, TypeError) as exc:
             logger.warning("Azure Retail Prices lookup failed: %s", exc)
             warning = (
@@ -105,6 +120,7 @@ class PricingCatalog:
             )
             result = self._payload(
                 dict(BUNDLED_STANDARD_PRICES),
+                dict(BUNDLED_PRIORITY_PRICES),
                 source="Bundled 2026-09-29 pricing snapshot",
                 warning=warning,
                 currency="USD",

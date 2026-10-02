@@ -34,6 +34,7 @@ function setPricing(pricing) {
     `${pricing.source} · ${new Date(pricing.retrievedAt).toLocaleDateString()}`;
   document.querySelector("#standardPrice").textContent = pricePair(pricing.standard, pricing.currency);
   document.querySelector("#flexPrice").textContent = pricePair(pricing.flex, pricing.currency);
+  document.querySelector("#priorityPrice").textContent = pricePair(pricing.priority, pricing.currency);
   document.querySelector("#pricingLink").href = pricing.pricingPageUrl;
   const warning = document.querySelector("#pricingWarning");
   warning.hidden = !pricing.warning;
@@ -104,23 +105,22 @@ function renderResult(key, result, currency) {
 }
 
 function summarize(results, wallClockMs, currency) {
-  const { standard, flex } = results;
-  if (!standard.ok || !flex.ok) {
+  const { standard, flex, priority } = results;
+  if (!standard.ok || !flex.ok || !priority.ok) {
     return `Parallel run finished in ${duration(wallClockMs)}. One or more processing paths failed; inspect each lane.`;
   }
-  const latencyDelta = flex.latency.totalMs - standard.latency.totalMs;
-  const direction = latencyDelta >= 0 ? "slower" : "faster";
+  const fastest = Object.entries(results).sort((left, right) => left[1].latency.totalMs - right[1].latency.totalMs)[0];
   const saved = Math.max(standard.cost.amount - flex.cost.amount, 0);
-  return `Parallel run finished in ${duration(wallClockMs)}. Flex was ${duration(Math.abs(latencyDelta))} ${direction} and saved ${money(saved, currency)} for this request.`;
+  return `Parallel run finished in ${duration(wallClockMs)}. ${fastest[0][0].toUpperCase()}${fastest[0].slice(1)} was fastest; Flex saved ${money(saved, currency)} versus Standard.`;
 }
 
 function setLoading(loading) {
   runButton.disabled = loading || !config;
-  runButton.textContent = loading ? "Running both requests…" : "Run parallel comparison";
+  runButton.textContent = loading ? "Running three requests…" : "Run parallel comparison";
   form.setAttribute("aria-busy", String(loading));
   if (loading) {
-    runStatus.textContent = "Standard and Flex requests started together. Flex can take several minutes.";
-    resultSummary.textContent = "Waiting for both processing paths…";
+    runStatus.textContent = "Standard, Flex, and Priority requests started together.";
+    resultSummary.textContent = "Waiting for all three processing paths…";
     document.querySelectorAll(".race-lane").forEach((lane) => {
       lane.dataset.state = "loading";
       lane.querySelector(".race-lane__total").textContent = "Running…";
@@ -151,6 +151,7 @@ form.addEventListener("submit", async (event) => {
     setPricing(payload.pricing);
     renderResult("standard", payload.results.standard, payload.pricing.currency);
     renderResult("flex", payload.results.flex, payload.pricing.currency);
+    renderResult("priority", payload.results.priority, payload.pricing.currency);
     resultSummary.textContent = summarize(payload.results, payload.wallClockMs, payload.pricing.currency);
     runStatus.textContent = "Comparison complete. Change the prompt and run again.";
   } catch (error) {
@@ -179,7 +180,7 @@ fetch("/api/config")
       document.querySelector("#logoutLink").hidden = false;
     }
     runButton.disabled = false;
-    runStatus.textContent = "Ready. Each run sends two billable requests in parallel.";
+    runStatus.textContent = "Ready. Each run sends three billable requests in parallel.";
   })
   .catch((error) => {
     runStatus.textContent = error.message;
@@ -210,6 +211,12 @@ function aggregateCard(title, tier, aggregate, currency) {
     ...metric("Average cost", money(aggregate.averageCost, currency)),
     ...metric("Average output tokens", tokenCount(aggregate.averageOutputTokens)),
     ...metric("Total retries", tokenCount(aggregate.totalRetries)),
+    ...metric(
+      "Processed tiers",
+      Object.entries(aggregate.processedTierCounts)
+        .map(([tierName, count]) => `${tierName} ${count}`)
+        .join(" · "),
+    ),
   ].forEach((node) => details.append(node));
   article.append(heading, headline, headlineLabel, details);
   return article;
@@ -223,7 +230,7 @@ function responseBlock(label, result, currency) {
   const metadata = document.createElement("p");
   metadata.className = "run-response__meta";
   metadata.textContent = result.ok
-    ? `${duration(result.latency.totalMs)} total · ${duration(result.latency.timeToFirstTokenMs)} first token · ${money(result.cost.amount, currency)} · ${result.attempts || 1} attempt(s)`
+    ? `${result.processedTier || "unknown"} tier · ${duration(result.latency.totalMs)} total · ${duration(result.latency.timeToFirstTokenMs)} first token · ${money(result.cost.amount, currency)} · ${result.attempts || 1} attempt(s)`
     : `Failed after ${result.attempts || 1} attempt(s): ${result.error}`;
   const text = document.createElement("p");
   text.className = "run-response__text";
@@ -242,19 +249,15 @@ function runRow(run, currency) {
   standard.textContent = run.standard.ok ? `Standard ${duration(run.standard.latency.totalMs)}` : "Standard failed";
   const flex = document.createElement("span");
   flex.textContent = run.flex.ok ? `Flex ${duration(run.flex.latency.totalMs)}` : "Flex failed";
-  const delta = document.createElement("span");
-  if (run.standard.ok && run.flex.ok) {
-    const difference = run.flex.latency.totalMs - run.standard.latency.totalMs;
-    delta.textContent = `Flex ${duration(Math.abs(difference))} ${difference >= 0 ? "slower" : "faster"}`;
-  } else {
-    delta.textContent = "Incomplete pair";
-  }
-  summary.append(label, standard, flex, delta);
+  const priority = document.createElement("span");
+  priority.textContent = run.priority.ok ? `Priority ${duration(run.priority.latency.totalMs)}` : "Priority failed";
+  summary.append(label, standard, flex, priority);
   const body = document.createElement("div");
   body.className = "run-row__body";
   body.append(
     responseBlock("Standard", run.standard, currency),
     responseBlock("Flex", run.flex, currency),
+    responseBlock("Priority", run.priority, currency),
   );
   details.append(summary, body);
   return details;
@@ -275,21 +278,23 @@ async function loadResults() {
     aggregateGrid.replaceChildren(
       aggregateCard("Standard", "standard", payload.aggregate.standard, payload.pricing.currency),
       aggregateCard("Flex", "flex", payload.aggregate.flex, payload.pricing.currency),
+      aggregateCard("Priority", "priority", payload.aggregate.priority, payload.pricing.currency),
     );
     const comparison = document.createElement("article");
     comparison.className = "aggregate-card aggregate-card--comparison";
     const title = document.createElement("h2");
     title.textContent = "Observed tradeoff";
     const headline = document.createElement("strong");
-    const delta = payload.aggregate.comparison.medianLatencyDeltaPercent;
+    const delta = payload.aggregate.comparison.flexMedianLatencyDeltaPercent;
     headline.textContent = `${Math.abs(delta).toFixed(1)}%`;
     const label = document.createElement("p");
     label.textContent = `Flex median latency was ${delta >= 0 ? "higher" : "lower"}`;
     const savings = document.createElement("p");
     savings.className = "aggregate-card__note";
     savings.textContent =
-      `Average estimated cost saving: ${payload.aggregate.comparison.averageCostSavingsPercent.toFixed(1)}%. ` +
-      `Successful pairs: ${payload.aggregate.comparison.successfulPairs}/${payload.runCount}.`;
+      `Flex average saving vs Standard: ${payload.aggregate.comparison.flexAverageCostSavingsPercent.toFixed(1)}%. ` +
+      `Priority median latency vs Standard: ${payload.aggregate.comparison.priorityMedianLatencyDeltaPercent.toFixed(1)}%. ` +
+      `Complete triples: ${payload.aggregate.comparison.successfulTriples}/${payload.runCount}.`;
     comparison.append(title, headline, label, savings);
     aggregateGrid.append(comparison);
     const runsList = document.querySelector("#runsList");

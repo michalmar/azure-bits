@@ -47,13 +47,26 @@ def tier_aggregate(runs: list[dict[str, Any]], tier: str) -> dict[str, Any]:
         if successful
         else None,
         "totalRetries": sum(max(int(result.get("attempts", 1)) - 1, 0) for result in results),
+        "processedTierCounts": {
+            processed_tier: sum(
+                1 for result in successful if result.get("processedTier") == processed_tier
+            )
+            for processed_tier in sorted(
+                {str(result.get("processedTier") or "unknown") for result in successful}
+            )
+        },
     }
 
 
 def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
     standard = tier_aggregate(runs, "standard")
     flex = tier_aggregate(runs, "flex")
-    pairs = [run for run in runs if run["standard"].get("ok") and run["flex"].get("ok")]
+    priority = tier_aggregate(runs, "priority")
+    triples = [
+        run
+        for run in runs
+        if run["standard"].get("ok") and run["flex"].get("ok") and run["priority"].get("ok")
+    ]
     standard_median = standard["totalMs"]["p50"]
     flex_median = flex["totalMs"]["p50"]
     latency_delta = (
@@ -61,19 +74,29 @@ def aggregate(runs: list[dict[str, Any]]) -> dict[str, Any]:
         if standard_median and flex_median is not None
         else 0
     )
-    savings = [
+    flex_savings = [
         ((run["standard"]["cost"]["amount"] - run["flex"]["cost"]["amount"]) / run["standard"]["cost"]["amount"])
         * 100
-        for run in pairs
+        for run in triples
         if run["standard"]["cost"]["amount"]
     ]
+    priority_median = priority["totalMs"]["p50"]
+    priority_latency_delta = (
+        ((priority_median - standard_median) / standard_median) * 100
+        if standard_median and priority_median is not None
+        else 0
+    )
     return {
         "standard": standard,
         "flex": flex,
+        "priority": priority,
         "comparison": {
-            "successfulPairs": len(pairs),
-            "medianLatencyDeltaPercent": round(latency_delta, 1),
-            "averageCostSavingsPercent": round(statistics.fmean(savings), 1) if savings else 0,
+            "successfulTriples": len(triples),
+            "flexMedianLatencyDeltaPercent": round(latency_delta, 1),
+            "priorityMedianLatencyDeltaPercent": round(priority_latency_delta, 1),
+            "flexAverageCostSavingsPercent": (
+                round(statistics.fmean(flex_savings), 1) if flex_savings else 0
+            ),
         },
     }
 
@@ -92,7 +115,9 @@ def public_result(result: dict[str, Any]) -> dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Capture repeatable Standard versus Flex benchmark results.")
+    parser = argparse.ArgumentParser(
+        description="Capture repeatable Standard, Flex, and Priority benchmark results."
+    )
     parser.add_argument("--base-url", default="http://127.0.0.1:8877")
     parser.add_argument("--runs", type=int, default=10)
     parser.add_argument("--max-output-tokens", type=int, default=400)
@@ -107,6 +132,7 @@ def main() -> None:
     captured: list[dict[str, Any]] = []
     pricing = None
     model = None
+    priority_deployment = None
     for index in range(1, args.runs + 1):
         response = post_json(
             f"{args.base_url.rstrip('/')}/api/compare",
@@ -115,6 +141,7 @@ def main() -> None:
         )
         pricing = response["pricing"]
         model = response["model"]
+        priority_deployment = response["priorityDeployment"]
         captured.append(
             {
                 "run": index,
@@ -122,18 +149,21 @@ def main() -> None:
                 "wallClockMs": response["wallClockMs"],
                 "standard": public_result(response["results"]["standard"]),
                 "flex": public_result(response["results"]["flex"]),
+                "priority": public_result(response["results"]["priority"]),
             }
         )
         print(
             f"Run {index}/{args.runs}: "
             f"standard={captured[-1]['standard'].get('latency', {}).get('totalMs', 'failed')}ms, "
             f"flex={captured[-1]['flex'].get('latency', {}).get('totalMs', 'failed')}ms",
+            f", priority={captured[-1]['priority'].get('latency', {}).get('totalMs', 'failed')}ms",
             flush=True,
         )
         if index < args.runs:
             time.sleep(2)
     output = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
+        "priorityDeployment": priority_deployment,
         "model": model,
         "prompt": args.prompt,
         "maxOutputTokens": args.max_output_tokens,
