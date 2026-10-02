@@ -1,0 +1,5 @@
+subscription_id      = "your-subscription-id"
+storage_account_name = "youruniquemaiaudiostorage"
+registry_name        = "youruniquemaiaudioregistry"
+foundry_account_id   = "/subscriptions/your-subscription-id/resourceGroups/your-foundry-group/providers/Microsoft.CognitiveServices/accounts/your-foundry"
+foundry_project_url  = "https://your-foundry.services.ai.azure.com/api/projects/your-project"

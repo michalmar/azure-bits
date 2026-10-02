@@ -1,0 +1,3 @@
+-r app/requirements.in
+websockets>=15,<18
+pytest>=8,<10

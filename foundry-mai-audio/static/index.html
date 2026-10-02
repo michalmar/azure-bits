@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MAI audio studio | Microsoft Foundry</title>
+  <link rel="icon" href="audio.svg" type="image/svg+xml">
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+  </style>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="baseline.css">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+<div class="demo-shell">
+  <header class="demo-header">
+    <a class="demo-brand" href="/"><span class="demo-brand__family">Microsoft Foundry</span><span class="demo-brand__divider" aria-hidden="true"></span><span>MAI audio studio</span></a>
+    <nav class="demo-nav" aria-label="Primary views">
+      <button class="demo-nav__item is-active" data-view="listen" aria-current="page">Listen &amp; learn</button>
+      <button class="demo-nav__item" data-view="playground">Playground</button>
+    </nav>
+    <div class="demo-header__actions">
+      <button id="logout" class="header-button" hidden>Sign out</button>
+      <a href="https://github.com/michalmar/azure-bits/tree/main/foundry-mai-audio" aria-label="Demo source on GitHub">GitHub</a>
+    </div>
+  </header>
+  <main class="demo-main">
+    <section id="listen">
+      <div class="demo-page-head"><h1>Hear the difference.</h1><p class="demo-lead">Two ways to speak. One way to listen as words arrive.</p><p class="demo-support">October 2026 launch · Public preview · Curated voices only</p></div>
+      <div class="model-rail">
+        <article><h2>MAI-Voice-2.1</h2><p>For narration, learning and voice experiences where expression takes priority.</p><strong>$22 / 1M characters</strong><p class="demo-meta">23 languages · 26 locales · Expressive SSML</p><a href="https://aka.ms/mai-voice-2.1-foundrycard">Model card</a></article>
+        <article><h2>MAI-Voice-2.1-Flash</h2><p>For assistants and support flows where responsiveness and volume matter.</p><strong>$15 / 1M characters</strong><p class="demo-meta">Same language coverage · Lower-latency focus</p><a href="https://aka.ms/mai-voice-2.1-flash-foundrycard">Model card</a></article>
+        <article><h2>MAI-Transcribe-2-Streaming</h2><p>Partial hypotheses evolve while you speak; committed segments become final text.</p><strong>$0.54 / audio hour</strong><p class="demo-meta">60 languages · Automatic language detection</p><a href="https://aka.ms/mai-transcribe-2-streaming-foundrycard">Model card</a></article>
+      </div>
+      <p class="demo-meta">Launch list prices, not a billing quote. Transcription introductory price runs through December 31, 2026. Infrastructure, transfer and storage are additional.</p>
+      <section class="listening-room" aria-labelledby="gallery-title">
+        <div class="section-heading"><div><h2 id="gallery-title">A small listening room.</h2><p>Real MAI outputs generated once. Replaying does not call a model.</p></div><button class="demo-button demo-button--secondary" id="try-example">Try this text live</button></div>
+        <label class="demo-field scenario-field"><span class="demo-field__label">Listening example</span><select id="scenario" class="demo-control"><option value="compare">Same text, same voice</option><option value="expression">A warmer welcome</option><option value="czech">Harper in Czech</option><option value="german">Harper in German</option></select></label>
+        <p id="gallery-status" role="status">Loading cached audio...</p>
+        <blockquote id="sample-text"></blockquote>
+        <div id="gallery" class="audio-pair"></div>
+        <p class="demo-meta">Harper examples across languages show the documented voice family, not voice cloning. Delivery varies between runs. No browser speech-synthesis substitute is used.</p>
+      </section>
+      <section class="explanation">
+        <div><h2>Listen early. Commit carefully.</h2><p>A provisional caption can change as context arrives. Stable deltas accumulate; a commit closes the current segment. The playground commits every three seconds and at Stop, because this API has no automatic server-side turn detection.</p><div class="signal-flow"><span>Microphone</span><span aria-hidden="true">→</span><span>MAI Transcribe</span><span aria-hidden="true">→</span><span>Partial + final text</span></div></div>
+        <div><h2>What this demo does not claim.</h2><p>Microsoft reports words appearing as early as 320 ms and Flash generating 45 seconds of audio in 150 ms in its launch material. Those are reported examples, not guarantees or measurements from this page. Our timer measures request-to-complete audio; transcription timing starts at the first audio chunk, not a word boundary.</p><p>Voice cloning requires Limited Access approval and recorded consent. It is intentionally absent. This is a caption and synthesis studio, not a full reasoning voice agent.</p></div>
+      </section>
+      <footer><h2>Read the launch and contracts.</h2><p><a href="https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/build-expressive-voice-experiences-with-new-mai-models-in-microsoft-foundry/4524637">Foundry launch</a> · <a href="https://microsoft.ai/news/our-first-streaming-transcription-model/">Microsoft AI launch</a> · <a href="https://learn.microsoft.com/azure/ai-services/speech-service/mai-voices">Voice IDs and styles</a> · <a href="https://learn.microsoft.com/azure/ai-services/speech-service/mai-transcribe-2-streaming-realtime">Streaming protocol</a></p><p class="demo-meta">Sources checked October 2, 2026. Static guidance never requires inference.</p></footer>
+    </section>
+    <section id="playground" hidden>
+      <div class="demo-page-head"><h1>Make it speak.<br>Watch it listen.</h1><p class="demo-lead">Compare the same passage, or capture live captions. No chat agent in between.</p></div>
+      <p id="live-status" role="status">Checking live availability...</p>
+      <div class="mode-nav" aria-label="Playground mode"><button id="voice-mode" aria-pressed="true">Generate speech</button><button id="caption-mode" aria-pressed="false">Live captions</button></div>
+      <section id="voice-workbench" class="demo-workbench">
+        <form id="speech-form" class="demo-workbench__controls">
+          <label class="demo-field"><span class="demo-field__label">Curated voice / language</span><select id="voice" class="demo-control"></select></label>
+          <label class="demo-field"><span class="demo-field__label">Delivery</span><select id="style" class="demo-control"></select><span class="demo-field__hint">Only styles documented for this voice are offered.</span></label>
+          <label class="demo-field"><span class="demo-field__label">Text to speak</span><textarea id="text" class="demo-control demo-control--textarea" maxlength="600" required>Your table is ready. I have moved your reservation to seven thirty, and sent the confirmation. Is there anything else I can help you with?</textarea></label>
+          <p id="estimate" class="demo-meta"></p>
+          <label class="demo-field"><span class="demo-field__label">Generate with</span><select id="model" class="demo-control"><option value="both">Both models (two paid calls)</option><option>MAI-Voice-2.1</option><option>MAI-Voice-2.1-Flash</option></select></label>
+          <button id="generate" class="demo-button demo-button--primary" disabled>Generate speech</button>
+          <p class="demo-meta">600 characters maximum · 12 calls per reader per minute · 3 simultaneous calls across this demo</p>
+        </form>
+        <div class="demo-workbench__output"><h2>Listen side by side.</h2><p id="generation-status" role="status">Generated audio appears here. Input is sent to Azure only when you select Generate speech.</p><div id="results" class="audio-pair"></div><p class="demo-meta">Request-to-complete audio includes service processing and transfer. Not time-to-first-audio or a controlled benchmark. Generated audio stays in this browser session unless you download it.</p></div>
+      </section>
+      <section id="caption-workbench" class="demo-workbench" hidden>
+        <div class="demo-workbench__controls"><h2>Speak naturally.</h2><p>Automatic language detection. Allow microphone access, then speak for up to 60 seconds.</p><div class="demo-actions"><button id="record" class="demo-button demo-button--primary" disabled>Start microphone</button><button id="stop" class="demo-button demo-button--secondary" disabled>Stop &amp; finalize</button></div><p id="record-status" role="status">Microphone is off.</p><p class="demo-meta">Audio is streamed to Azure while recording; the application does not persist microphone audio or transcripts. Do not record other people or sensitive information without permission.</p><a id="transcript-download" hidden>Download transcript</a></div>
+        <div class="demo-workbench__output"><h2>Words as they arrive.</h2><div class="caption-ledger" aria-label="Transcription output"><p id="final-text"></p><p id="partial-text"></p></div><p id="caption-metrics" role="status">Stable text and provisional suffixes are shown separately.</p></div>
+      </section>
+    </section>
+  </main>
+</div>
+</body>
+</html>
