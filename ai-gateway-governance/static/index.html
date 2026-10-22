@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Governed summarizer | Azure AI Gateway</title>
+    <link rel="stylesheet" href="/static/tokens.css" />
+    <link rel="stylesheet" href="/static/baseline.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="demo-brand" href="/" aria-label="AI Gateway demo home">
+          <span class="demo-brand__family">Azure API Management</span>
+          <span class="demo-brand__divider" aria-hidden="true"></span>
+          <span>AI Gateway</span>
+        </a>
+        <nav class="demo-nav" aria-label="Demo sections">
+          <a class="demo-nav__item is-active" href="#workbench">Summarizer</a>
+          <a class="demo-nav__item" href="#auditHeading">Audit trail</a>
+        </nav>
+        <div class="demo-header__actions">
+          <a href="https://learn.microsoft.com/azure/api-management/ai-gateway-overview" target="_blank" rel="noopener noreferrer">Docs</a>
+          <a href="https://github.com/michalmar/azure-bits" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </header>
+
+      <main class="demo-main">
+        <div class="demo-page-head">
+          <h1>Same app. Governed by the gateway.</h1>
+          <p class="demo-lead">
+            A meeting-notes summarizer calls a model directly, then through AI Gateway. The gateway
+            enforces a token cap and a per-key rate limit. When it blocks the large model, the app
+            falls back to the small one and keeps working.
+          </p>
+          <p class="demo-support">
+            Every call is recorded with the requested and served model, the gateway decision, tokens,
+            latency, estimated cost, and the raw gateway evidence.
+          </p>
+        </div>
+
+        <section class="route-tape" aria-label="Configured routes">
+          <div>
+            <span class="route-tape__label">Gateway</span>
+            <strong id="gatewayState">Loading…</strong>
+          </div>
+          <div>
+            <span class="route-tape__label">Primary alias · large</span>
+            <strong id="primaryRoute">—</strong>
+          </div>
+          <div>
+            <span class="route-tape__label">Fallback alias · small</span>
+            <strong id="fallbackRoute">—</strong>
+          </div>
+          <div>
+            <span class="route-tape__label">Direct baseline</span>
+            <strong id="directRoute">—</strong>
+          </div>
+        </section>
+
+        <div class="demo-workbench" id="workbench">
+          <form class="demo-workbench__controls" id="summarizeForm">
+            <fieldset class="demo-field choice-group">
+              <legend class="demo-field__label">Path</legend>
+              <label class="choice"><input type="radio" name="path" value="direct" /> <span>Direct baseline <small>Entra ID, no gateway</small></span></label>
+              <label class="choice"><input type="radio" name="path" value="gateway" checked /> <span>Via AI Gateway <small>API key, policies applied</small></span></label>
+            </fieldset>
+
+            <div class="demo-field">
+              <span class="demo-field__label">Preset input</span>
+              <div class="preset-row">
+                <button class="demo-button demo-button--secondary" type="button" data-sample="short">Request 1 · short notes</button>
+                <button class="demo-button demo-button--secondary" type="button" data-sample="long">Request 2 · long transcript</button>
+              </div>
+            </div>
+
+            <label class="demo-field">
+              <span class="demo-field__label">Meeting notes</span>
+              <textarea class="demo-control demo-control--textarea" id="notes" required maxlength="60000"></textarea>
+              <span class="demo-field__hint" id="charCount">0 characters</span>
+            </label>
+
+            <button class="demo-button demo-button--primary" id="summarizeButton" type="submit" disabled>Summarize</button>
+            <p class="run-status" id="runStatus" role="status" aria-live="polite">Loading configuration…</p>
+
+            <div class="burst-box">
+              <h2>Request 3 · rate-limit test</h2>
+              <p class="demo-field__hint">
+                Sends parallel tiny requests to <code id="burstModel">primary alias</code> with the
+                <code id="burstKeyName">burst-client</code> key, then one control request with the app key.
+              </p>
+              <label class="demo-field burst-count">
+                <span class="demo-field__label">Parallel requests</span>
+                <input class="demo-control" id="burstCount" type="number" min="2" max="20" value="10" />
+              </label>
+              <button class="demo-button demo-button--secondary" id="burstButton" type="button" disabled>Run burst</button>
+            </div>
+          </form>
+
+          <section class="demo-workbench__output" aria-labelledby="runHeading">
+            <div class="results-heading">
+              <div>
+                <h2 id="runHeading">Run details</h2>
+                <p id="runSummary">Choose a path and summarize to see the gateway's decision.</p>
+              </div>
+              <span class="run-flag" id="fallbackFlag" data-state="idle">No run</span>
+            </div>
+
+            <dl class="metric-grid run-grid" id="runDetails">
+              <dt>Status</dt><dd>—</dd>
+              <dt>Path</dt><dd>—</dd>
+              <dt>Requested model</dt><dd>—</dd>
+              <dt>Served model</dt><dd>—</dd>
+              <dt>Policy</dt><dd>—</dd>
+              <dt>Action</dt><dd>—</dd>
+            </dl>
+
+            <div class="response-copy" id="summaryOutput">
+              <p>The summary will appear here.</p>
+            </div>
+
+            <div class="burst-results" id="burstResults" hidden>
+              <h3>Burst result</h3>
+              <p id="burstSummary"></p>
+              <ol class="burst-strip" id="burstStrip" aria-label="Burst request outcomes"></ol>
+              <details>
+                <summary>Normalized error returned to the client</summary>
+                <pre id="burstError"></pre>
+              </details>
+            </div>
+          </section>
+        </div>
+
+        <section class="audit-section" aria-labelledby="auditHeading">
+          <div class="results-heading">
+            <div>
+              <h2 id="auditHeading">Audit trail</h2>
+              <p>Every model call, newest first. Also written to <code>logs/audit.jsonl</code>. Key values are never logged, only key names.</p>
+            </div>
+            <div class="audit-actions">
+              <button class="demo-button demo-button--secondary" id="refreshAudit" type="button">Refresh</button>
+              <button class="demo-button demo-button--secondary" id="clearAudit" type="button">Clear</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th scope="col">Time</th>
+                  <th scope="col">Correlation ID</th>
+                  <th scope="col">Path · key</th>
+                  <th scope="col">Requested → served</th>
+                  <th scope="col">HTTP</th>
+                  <th scope="col">Decision</th>
+                  <th scope="col">Tokens</th>
+                  <th scope="col">Latency</th>
+                  <th scope="col">Est. cost</th>
+                </tr>
+              </thead>
+              <tbody id="auditRows">
+                <tr><td colspan="9" class="empty">No calls yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <details class="audit-detail" id="auditDetail" hidden>
+            <summary id="auditDetailTitle">Raw evidence</summary>
+            <pre id="auditDetailBody"></pre>
+          </details>
+        </section>
+
+        <section class="method-note">
+          <h2>Why the comparison is fair</h2>
+          <p>
+            Both tiers receive the same input text. Generation settings follow each model's capabilities
+            (large: <span id="largeParams">—</span>; small: <span id="smallParams">—</span>). The direct baseline
+            calls the same large deployment as the gateway's primary alias. The difference is deliberate and visible:
+            the large tier uses the structured prompt (Kontext, Rozhodnutí, Akční položky, Rizika, up to 8 points,
+            <span id="largeCap">1000</span> output tokens); the small tier uses the concise three-paragraph prompt
+            (<span id="smallCap">350</span> output tokens). Cost is estimated from returned token usage and
+            configured list prices, not from billing data. Latency is one observation, not a benchmark.
+          </p>
+          <div class="method-links">
+            <a href="https://learn.microsoft.com/azure/api-management/ai-gateway-overview" target="_blank" rel="noopener noreferrer">AI Gateway overview</a>
+            <a href="https://learn.microsoft.com/azure/api-management/genai-gateway-capabilities" target="_blank" rel="noopener noreferrer">Gateway capabilities</a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>
