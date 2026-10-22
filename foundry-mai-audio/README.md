@@ -18,6 +18,8 @@ using a Microsoft Entra account in the configured tenant.
 No LLM, agent framework, browser TTS stand-in, voice cloning, translation engine,
 or database is needed. Model information renders without JavaScript. The small
 Python backend is needed for managed-identity service calls and reader protection.
+The frontend uses the shared demos' white background, ink-blue text, dark header
+and system typography. It stays light regardless of the operating-system theme.
 
 ## Prerequisites and configuration
 
