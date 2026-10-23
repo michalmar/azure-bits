@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Directory of self-contained Azure services and Microsoft Foundry demos with live links, source code, and setup guides."
+    />
+    <title>Azure Bits | Demo Directory</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23111315%22/><path d=%22M9 22 15.5 9h3L25 22h-3.2l-1.3-2.8h-7L12.2 22H9Zm5.7-5.4h4.6L17 11.7l-2.3 4.9Z%22 fill=%22%236fd3e8%22/></svg>"
+    />
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./baseline.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="demo-shell">
+      <header class="demo-header">
+        <a class="demo-brand" href="./" aria-label="Azure Bits home">
+          <span class="demo-brand__family">Microsoft Foundry &amp; Azure</span>
+          <span class="demo-brand__divider" aria-hidden="true"></span>
+          <span>Azure Bits</span>
+        </a>
+        <nav class="demo-nav" aria-label="Page sections">
+          <a class="demo-nav__item is-active" href="#directory">Demos</a>
+          <a class="demo-nav__item" href="#conventions">Setup &amp; conventions</a>
+        </nav>
+        <div class="demo-header__actions">
+          <a
+            class="header-link"
+            href="https://github.com/michalmar/azure-bits"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub repository
+          </a>
+        </div>
+      </header>
+
+      <main class="demo-main">
+        <section class="demo-page-head" aria-labelledby="page-title">
+          <div>
+            <h1 id="page-title">Focused Azure &amp; Microsoft Foundry demos.</h1>
+          </div>
+          <p class="demo-lead">
+            Self-contained reference implementations with live Azure Container Apps deployments,
+            interactive browser frontends, reproducible benchmarks, and Terraform infrastructure.
+          </p>
+          <p class="demo-support">
+            Deployed apps require sign-in with an account in the configured Microsoft Entra tenant.
+            Static browser artifacts run directly here on GitHub Pages.
+          </p>
+        </section>
+
+        <section class="summary-tape" aria-label="Repository overview">
+          <div>
+            <span class="summary-tape__label">Catalog</span>
+            <strong>7 self-contained demos</strong>
+          </div>
+          <div>
+            <span class="summary-tape__label">Hosting target</span>
+            <strong>Azure Container Apps Express · Sweden Central</strong>
+          </div>
+          <div>
+            <span class="summary-tape__label">Workload authentication</span>
+            <strong>Managed Identity &amp; Entra ID</strong>
+          </div>
+          <div>
+            <span class="summary-tape__label">Infrastructure as Code</span>
+            <strong>Terraform + automated deploy scripts</strong>
+          </div>
+        </section>
+
+        <section id="directory" aria-labelledby="directory-heading">
+          <h2 id="directory-heading" class="sr-only">Demo directory</h2>
+
+          <div class="catalog-toolbar">
+            <label class="demo-field catalog-search" for="demoSearch">
+              <span class="demo-field__label">Find a demo</span>
+              <input
+                id="demoSearch"
+                class="demo-control"
+                type="search"
+                placeholder="Filter by model, service, or capability (e.g. GPT-Live, MAI, gateway, flex)…"
+                autocomplete="off"
+              />
+            </label>
+
+            <div class="catalog-filters" role="group" aria-label="Filter demos by category">
+              <button
+                type="button"
+                class="filter-tab is-active"
+                data-filter="all"
+                aria-pressed="true"
+              >
+                All (7)
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                data-filter="voice"
+                aria-pressed="false"
+              >
+                Voice &amp; Speech (3)
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                data-filter="models"
+                aria-pressed="false"
+              >
+                Models &amp; Benchmarks (3)
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                data-filter="governance"
+                aria-pressed="false"
+              >
+                Gateway &amp; Governance (1)
+              </button>
+            </div>
+          </div>
+
+          <p id="catalogStatus" class="catalog-status" role="status" aria-live="polite">
+            Showing all 7 demos.
+          </p>
+
+          <ol class="demo-catalog" id="demoCatalog">
+            <li
+              class="demo-entry"
+              data-category="governance"
+              data-keywords="apim api management rate limit token limit fallback gpt-6.1-sol gpt-6-luna audit trail"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Gateway &amp; Governance</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://ai-gateway-governance-demo.salmonbush-57fddba4.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    AI Gateway governance
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">ai-gateway-governance/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Meeting-notes summarizer that compares a direct Foundry model call with Azure API
+                  Management AI Gateway. When the gateway denies the primary large model due to a
+                  rate or token policy limit, the app falls back to the small model and records
+                  every decision, header, and error envelope in an audit trail.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Models:</strong> gpt-6.1-sol, gpt-6-luna</li>
+                  <li><strong>Surface:</strong> FastAPI + browser workbench + audit trail</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://ai-gateway-governance-demo.salmonbush-57fddba4.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/ai-gateway-governance/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/ai-gateway-governance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/ai-gateway-governance/README.md#run-locally"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Run locally
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/ai-gateway-governance/README.md#deploy-to-azure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Deploy
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="models"
+              data-keywords="openai anthropic release timeline animation canvas video mp4 static"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Models &amp; Benchmarks</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Static browser player</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a href="./ai-model-release-timeline/static/">
+                    AI model release timeline
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">ai-model-release-timeline/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Animated, source-linked comparison of public OpenAI and Anthropic model releases
+                  from October 2024 through September 2026. Shares one deterministic 1920×1080
+                  canvas renderer between the interactive browser player and the 1080p MP4 exporter.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Scope:</strong> Oct 2024 – Sep 2026 release dataset</li>
+                  <li><strong>Surface:</strong> Static HTML5 Canvas player + MP4 export</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="./ai-model-release-timeline/static/"
+                  >
+                    Open interactive player
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="./ai-model-release-timeline/media/model-release-timeline.mp4"
+                  >
+                    Download MP4
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/ai-model-release-timeline/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/ai-model-release-timeline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="./ai-model-release-timeline/static/releases.json"
+                  >
+                    Release data (JSON)
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="models"
+              data-keywords="gpt-5.6-sol standard flex priority service tier latency pricing benchmark"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Models &amp; Benchmarks</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://foundry-flex-demo.mangoplant-8b221bda.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Foundry processing tier comparison
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-flex-processing/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Sends the same prompt to GPT-5.6 Sol through Standard, Flex, and Priority
+                  processing in parallel. Compares full responses, streaming latency phases, token
+                  consumption, actual served tier (including Priority downgrades), and live Azure
+                  Retail Prices cost estimates alongside a checked-in 10-run benchmark.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Model:</strong> gpt-5.6-sol (Standard, Flex, Priority)</li>
+                  <li><strong>Surface:</strong> Parallel streaming workbench + 10-run dataset</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://foundry-flex-demo.mangoplant-8b221bda.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-flex-processing/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/foundry-flex-processing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-flex-processing/README.md#run-locally"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Run locally
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-flex-processing/README.md#deploy-to-azure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Deploy
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="models"
+              data-keywords="image generation editing gallery playground gpt-image-2.5-sunburst mai-image-2.6-flash mai-image-2.6 mai-image-2.5 gpt-image-2"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Models &amp; Benchmarks</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://foundry-image-models-demo.calmrock-baf930f6.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Foundry image models
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-image-models/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Customer-ready comparison gallery and interactive playground for five Microsoft
+                  Foundry image deployments. Inspect synchronized detail across fixed prompts or
+                  generate and edit images in an ephemeral session when the selected model reports
+                  image-input support.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li>
+                    <strong>Models:</strong> gpt-image-2.5-sunburst, MAI-Image-2.6 / Flash / 2.5,
+                    gpt-image-2
+                  </li>
+                  <li><strong>Surface:</strong> Synchronized 5-model gallery + playground</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://foundry-image-models-demo.calmrock-baf930f6.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-image-models/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/foundry-image-models"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-image-models/README.md#local-setup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Local setup
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-image-models/README.md#deploy-to-azure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Deploy
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="voice"
+              data-keywords="gpt-live-1 voice audio full-duplex conversation websocket microphone transcript"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Voice &amp; Speech</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://foundry-gpt-live-demo.wonderfulforest-c2bd4c50.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Foundry GPT-Live conversation
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-gpt-live/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Full-duplex voice conversation with <code>gpt-live-1</code> featuring live
+                  interleaved transcripts, barge-in interruption support, editable system prompt
+                  presets (Default, Language tutor, Grill), and a server-enforced 1–15 minute
+                  session timer.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Model:</strong> gpt-live-1 (24 kHz PCM16 WebSocket)</li>
+                  <li><strong>Surface:</strong> Live voice session + transcript stream</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://foundry-gpt-live-demo.wonderfulforest-c2bd4c50.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-gpt-live/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/foundry-gpt-live"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-gpt-live/README.md#run-locally"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Run locally
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-gpt-live/README.md#deploy-to-azure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Deploy
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="voice"
+              data-keywords="mai-voice-2.1 mai-voice-2.1-flash mai-transcribe-2-streaming speech synthesis tts stt captions audio"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Voice &amp; Speech</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://foundry-mai-audio-demo.mangoplant-89bf92cc.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    MAI audio studio
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-mai-audio/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Source-linked MAI audio guide, cached listening room comparing expressive and
+                  multilingual samples, side-by-side speech synthesis playground for MAI-Voice-2.1
+                  and Flash, and real-time streaming captions with partial and committed text.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li>
+                    <strong>Models:</strong> MAI-Voice-2.1, MAI-Voice-2.1-Flash,
+                    MAI-Transcribe-2-Streaming
+                  </li>
+                  <li><strong>Surface:</strong> Listening room + TTS &amp; live caption studio</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://foundry-mai-audio-demo.mangoplant-89bf92cc.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-mai-audio/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/foundry-mai-audio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-mai-audio/README.md#run-locally"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Run locally
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-mai-audio/README.md#deploy-to-azure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Deploy
+                  </a>
+                </div>
+              </div>
+            </li>
+
+            <li
+              class="demo-entry"
+              data-category="voice"
+              data-keywords="speech live interpreter translation real-time personal voice cli websocket"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Voice &amp; Speech</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live on Azure + CLI</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a
+                    href="https://foundry-speech-interpreter.calmmeadow-e5324689.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Azure Speech Live Interpreter
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-speech-live-interpreter/</span>
+              </div>
+
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  Browser and CLI demo for real-time speech translation with automatic open-range
+                  input-language detection and live synthesized translated audio. Supports neural
+                  voices and gated Personal Voice when Limited Access approval is enabled on the
+                  configured Speech resource.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Service:</strong> Azure Speech Live Interpreter (universal v2)</li>
+                  <li><strong>Surface:</strong> Real-time browser translator + Python CLI</li>
+                </ul>
+              </div>
+
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a
+                    class="demo-button demo-button--primary"
+                    href="https://foundry-speech-interpreter.calmmeadow-e5324689.swedencentral.azurecontainerapps.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open live demo
+                  </a>
+                  <a
+                    class="demo-button demo-button--secondary"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-speech-live-interpreter/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    README
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/tree/main/foundry-speech-live-interpreter"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source folder
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-speech-live-interpreter/README.md#configure-and-run-locally"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Run locally
+                  </a>
+                  <a
+                    class="demo-text-link"
+                    href="https://github.com/michalmar/azure-bits/blob/main/foundry-speech-live-interpreter/README.md#infrastructure"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Infrastructure
+                  </a>
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <div id="catalogEmpty" class="demo-empty catalog-empty" hidden>
+            <div>
+              <strong>No demos match the current filter.</strong>
+              <p>Try a broader keyword or reset the category filter.</p>
+            </div>
+            <button
+              type="button"
+              id="resetCatalogFilters"
+              class="demo-button demo-button--secondary"
+            >
+              Show all demos
+            </button>
+          </div>
+        </section>
+
+        <section
+          id="conventions"
+          class="convention-section"
+          aria-labelledby="conventions-heading"
+        >
+          <div>
+            <h2 id="conventions-heading">Shared setup &amp; architecture</h2>
+            <p class="convention-section__lead">
+              Every demo in this repository is isolated in its own top-level folder and follows the
+              same authentication, infrastructure, and visual design standards.
+            </p>
+          </div>
+
+          <div class="convention-grid">
+            <div class="convention-item">
+              <h3>Azure CLI profile &amp; local development</h3>
+              <p>
+                Local runs and deployment scripts expect an authenticated Azure CLI session using
+                the repository configuration directories:
+              </p>
+              <pre class="code-block"><code>export AZURE_CONFIG_DIR="$HOME/.azure-365"
+export AZD_CONFIG_DIR="$HOME/.azd-365"</code></pre>
+            </div>
+
+            <div class="convention-item">
+              <h3>Managed identity &amp; reader protection</h3>
+              <p>
+                Demo workloads authenticate to Microsoft Foundry, Azure OpenAI, Speech, and Blob
+                Storage with user-assigned managed identities rather than service keys or secrets.
+                Public Azure Container Apps endpoints require single-tenant Microsoft Entra sign-in.
+              </p>
+            </div>
+
+            <div class="convention-item">
+              <h3>Terraform &amp; scale-to-zero hosting</h3>
+              <p>
+                Infrastructure lives in each demo’s <code>infra/</code> folder and provisions Azure
+                Container Apps Express in Sweden Central with HTTP scaling from zero to one replica,
+                dedicated ACR, and least-privilege role assignments.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

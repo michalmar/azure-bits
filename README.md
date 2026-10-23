@@ -4,6 +4,8 @@ Small, focused demos of Azure services and Microsoft Foundry capabilities. Each
 demo is self-contained in a top-level folder with its application code,
 frontend, tests, infrastructure, and detailed setup instructions.
 
+**Browse the interactive catalog:** [GitHub Pages demo directory](https://michalmar.github.io/azure-bits/) (or serve the repository root locally with `python3 -m http.server 8000` and open [`index.html`](index.html)).
+
 ## Demo directory
 
 | Demo | Description | Frontend | Run and deploy |
