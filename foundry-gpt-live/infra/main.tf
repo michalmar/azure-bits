@@ -139,7 +139,7 @@ resource "azapi_resource" "container_app" {
               { name = "AZURE_CLIENT_ID", value = azurerm_user_assigned_identity.demo.client_id },
               { name = "AZURE_OPENAI_ENDPOINT", value = var.azure_openai_endpoint },
               { name = "LIVE_DEPLOYMENT", value = var.live_deployment },
-              { name = "MAX_SESSION_SECONDS", value = "300" },
+              { name = "MAX_SESSION_SECONDS", value = "900" },
               { name = "MAX_CONCURRENT_SESSIONS", value = "3" },
               { name = "ALLOWED_USERS", value = "tenant:*" },
             ]

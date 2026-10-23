@@ -315,7 +315,7 @@ env = {
 assert env.get('AUTH_ENABLED') == 'true', env
 assert env.get('BOOTSTRAP_LOCKED') == 'false', env
 assert env.get('ALLOWED_USERS') == 'tenant:*', env
-assert env.get('MAX_SESSION_SECONDS') == '300', env
+assert env.get('MAX_SESSION_SECONDS') == '900', env
 assert env.get('AZURE_OPENAI_ENDPOINT') == '$AZURE_OPENAI_ENDPOINT', env
 "
 
@@ -352,6 +352,7 @@ main() {
     --resource-group "$TARGET_RESOURCE_GROUP"
     --tenant-id "$TARGET_TENANT_ID"
     --container-image "$BUILT_IMAGE"
+    --max-session-seconds 900
     --identity-client-id "$(tf_wrap output -raw identity_client_id)"
   )
   if [[ "$CONTAINER_APP_EXISTS" == "true" && "$CURRENT_AUTH_CONFIG_COMPLETE" == "true" && "$CURRENT_BOOTSTRAP_LOCKED" == "false" ]]; then

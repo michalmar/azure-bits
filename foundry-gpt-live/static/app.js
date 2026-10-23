@@ -12,6 +12,12 @@ const modelLevel = document.querySelector("#modelLevel");
 const micState = document.querySelector("#micState");
 const modelState = document.querySelector("#modelState");
 const modelName = document.querySelector("#modelName");
+const systemPrompt = document.querySelector("#systemPrompt");
+const promptPresets = document.querySelector("#promptPresets");
+const promptSelection = document.querySelector("#promptSelection");
+const durationMinutes = document.querySelector("#durationMinutes");
+const decreaseDuration = document.querySelector("#decreaseDuration");
+const increaseDuration = document.querySelector("#increaseDuration");
 
 let socket;
 let microphone;
@@ -21,6 +27,7 @@ let captureNode;
 let phase = "idle";
 let muted = false;
 let config;
+let selectedSessionSeconds;
 let deadline;
 let timer;
 let closeTimer;
@@ -33,16 +40,43 @@ function setStatus(message, state = "") {
   status.dataset.state = state;
 }
 
+function updatePromptSelection() {
+  const selected = config.promptPresets.find((preset) => preset.instructions === systemPrompt.value);
+  for (const button of promptPresets.children) {
+    button.setAttribute("aria-pressed", String(button.dataset.presetId === selected?.id));
+  }
+  promptSelection.textContent =
+    `${selected ? `${selected.label} preset` : "Custom prompt"} · ${systemPrompt.value.length} / ${config.maxInstructionsLength} characters`;
+}
+
+function updateDurationControls() {
+  const editable = config && phase === "idle";
+  decreaseDuration.disabled = !editable || selectedSessionSeconds <= config.minSessionSeconds;
+  increaseDuration.disabled = !editable || selectedSessionSeconds >= config.maxSessionSeconds;
+  if (!config) return;
+  const minutes = selectedSessionSeconds / 60;
+  const label = `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+  durationMinutes.textContent = label;
+  document.querySelector(".session-strip__limit").textContent = `/ ${label} per conversation`;
+  if (phase === "idle") remaining.textContent = clock(selectedSessionSeconds);
+}
+
+function changeDuration(delta) {
+  if (!config || phase !== "idle") return;
+  selectedSessionSeconds = Math.min(
+    config.maxSessionSeconds, Math.max(config.minSessionSeconds, selectedSessionSeconds + delta),
+  );
+  updateDurationControls();
+}
+
 function updateRemaining() {
   if (!deadline) return;
   const seconds = Math.max(0, (deadline - Date.now()) / 1000);
   remaining.textContent = clock(seconds);
   remaining.classList.toggle("is-low", seconds <= 30);
   if (seconds <= 0 && phase === "active") {
-    phase = "ending";
-    sessionButton.disabled = true;
-    muteButton.disabled = true;
-    setStatus("Five-minute limit reached. Closing the conversation…");
+    setPhase("ending");
+    setStatus("Session time limit reached. Closing the conversation…");
   }
 }
 
@@ -55,6 +89,9 @@ function setPhase(next) {
   sessionButton.disabled = !config || (!active && !idle);
   muteButton.disabled = !active;
   clearButton.disabled = !idle || !transcriptList.childElementCount;
+  systemPrompt.disabled = !config || !idle;
+  for (const button of promptPresets.children) button.disabled = !config || !idle;
+  updateDurationControls();
   micState.textContent = active ? (muted ? "Muted" : "Live") : "Off";
   modelState.textContent = active ? "Live" : "Off";
   if (!active) {
@@ -120,7 +157,7 @@ async function releaseMedia() {
   timer = null;
   closeTimer = null;
   deadline = null;
-  remaining.textContent = clock(config.maxSessionSeconds);
+  remaining.textContent = clock(selectedSessionSeconds);
   remaining.classList.remove("is-low");
   captureNode?.disconnect();
   captureNode = null;
@@ -170,7 +207,7 @@ function onMessage(event) {
     } else if (message.type === "closed") {
       setStatus(
         message.reason === "expired" || remaining.textContent === "00:00"
-          ? "Five-minute limit reached. Start a new conversation."
+          ? "Session time limit reached. Start a new conversation."
           : "Conversation ended. Start a new conversation.",
       );
       setPhase("ending");
@@ -184,6 +221,13 @@ function onMessage(event) {
 }
 
 async function startConversation() {
+  const instructions = systemPrompt.value;
+  const durationSeconds = selectedSessionSeconds;
+  if (!instructions.trim() || instructions.length > config.maxInstructionsLength) {
+    setStatus(`Enter a system prompt of 1 to ${config.maxInstructionsLength} characters.`, "error");
+    systemPrompt.focus();
+    return;
+  }
   if (!navigator.mediaDevices?.getUserMedia || !window.AudioWorkletNode || !window.AudioContext) {
     setStatus("This browser needs microphone and AudioWorklet support. Try a current browser over HTTPS.", "error");
     return;
@@ -197,7 +241,7 @@ async function startConversation() {
       audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
     });
     captureContext = new AudioContext();
-    await captureContext.audioWorklet.addModule("/static/audio-worklet.js");
+    await captureContext.audioWorklet.addModule(new URL("./audio-worklet.js", import.meta.url));
     const source = captureContext.createMediaStreamSource(microphone);
     captureNode = new AudioWorkletNode(captureContext, "pcm-capture");
     captureNode.port.onmessage = ({ data }) => {
@@ -222,7 +266,10 @@ async function startConversation() {
     const current = new WebSocket(`${scheme}://${location.host}/api/live`);
     socket = current;
     current.addEventListener("message", onMessage);
-    current.addEventListener("open", () => setStatus("Waiting for GPT-Live…"));
+    current.addEventListener("open", () => {
+      current.send(JSON.stringify({ type: "start", instructions, durationSeconds }));
+      setStatus("Waiting for GPT-Live…");
+    });
     current.addEventListener("close", async (event) => {
       if (socket !== current) return;
       socket = null;
@@ -281,23 +328,63 @@ clearButton.addEventListener("click", () => {
   setStatus("Transcript cleared from this tab.");
 });
 
+systemPrompt.addEventListener("input", updatePromptSelection);
+decreaseDuration.addEventListener("click", () => changeDuration(-60));
+increaseDuration.addEventListener("click", () => changeDuration(60));
+
 window.addEventListener("pagehide", () => {
   if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "stop" }));
   socket?.close();
   microphone?.getTracks().forEach((track) => track.stop());
 });
 
-fetch("/api/config")
+fetch("/api/config", { cache: "no-store", signal: AbortSignal.timeout(15_000) })
   .then((response) => {
     if (!response.ok) throw new Error(`Configuration request failed (HTTP ${response.status}).`);
     return response.json();
   })
   .then((value) => {
+    if (
+      !Array.isArray(value?.promptPresets)
+      || !value.promptPresets.length
+      || !value.promptPresets.every((preset) =>
+        typeof preset?.id === "string"
+        && typeof preset.label === "string"
+        && typeof preset.instructions === "string")
+      || !Number.isInteger(value.maxInstructionsLength)
+      || value.maxInstructionsLength < 1
+      || ![value.minSessionSeconds, value.maxSessionSeconds, value.defaultSessionSeconds]
+        .every((seconds) => Number.isInteger(seconds) && seconds > 0 && seconds % 60 === 0)
+      || value.minSessionSeconds > value.defaultSessionSeconds
+      || value.defaultSessionSeconds > value.maxSessionSeconds
+    ) {
+      throw new Error("The server returned incompatible conversation settings. Reload the page to try again.");
+    }
+    const defaultPreset = value.promptPresets.find((preset) => preset.id === value.defaultPromptId);
+    if (!defaultPreset) {
+      throw new Error("The server did not provide a default prompt. Reload the page to try again.");
+    }
     config = value;
+    selectedSessionSeconds = value.defaultSessionSeconds;
+    systemPrompt.maxLength = value.maxInstructionsLength;
+    systemPrompt.value = defaultPreset.instructions;
+    for (const preset of value.promptPresets) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "demo-button demo-button--secondary";
+      button.dataset.presetId = preset.id;
+      button.textContent = preset.label;
+      button.addEventListener("click", () => {
+        if (phase !== "idle") return;
+        systemPrompt.value = preset.instructions;
+        updatePromptSelection();
+      });
+      promptPresets.append(button);
+    }
+    updatePromptSelection();
     modelName.textContent = value.model;
-    remaining.textContent = clock(value.maxSessionSeconds);
-    document.querySelector(".session-strip__limit").textContent =
-      `/ ${Math.round(value.maxSessionSeconds / 60)} minutes per conversation`;
+    document.querySelector("#durationHint").textContent =
+      `${value.minSessionSeconds / 60}-${value.maxSessionSeconds / 60} minutes, one minute at a time. Locked during a conversation.`;
     if (value.user) {
       document.querySelector("#readerName").textContent = value.user;
       document.querySelector("#readerName").hidden = false;
@@ -306,4 +393,14 @@ fetch("/api/config")
     setPhase("idle");
     setStatus("Ready. Start a conversation when you are ready.");
   })
-  .catch((error) => setStatus(error.message, "error"));
+  .catch((error) => {
+    config = null;
+    setPhase("idle");
+    promptSelection.textContent = "Prompt presets could not load. Reload the page to try again.";
+    setStatus(
+      error.name === "TimeoutError"
+        ? "Configuration request timed out. Reload the page to try again."
+        : error.message,
+      "error",
+    );
+  });

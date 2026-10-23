@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 from contextlib import asynccontextmanager
+import hashlib
 import json
 import logging
 import os
@@ -11,8 +12,8 @@ from urllib.parse import quote
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
-from fastapi import FastAPI, HTTPException, Request, WebSocket
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Request, Response, WebSocket
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from starlette.websockets import WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed, InvalidStatus
 
@@ -23,11 +24,20 @@ from .auth import (
     load_auth_config_from_env,
     sanitize_return_to,
 )
-from .live import DELEGATION_REPLY, MAX_AUDIO_FRAME_BYTES, LiveService, LiveSettings
+from .live import (
+    DELEGATION_REPLY,
+    MAX_AUDIO_FRAME_BYTES,
+    MAX_INSTRUCTIONS_LENGTH,
+    MIN_SESSION_SECONDS,
+    PROMPT_PRESETS,
+    LiveService,
+    LiveSettings,
+)
 
 
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 logger = logging.getLogger(__name__)
+START_TIMEOUT_SECONDS = 15
 
 
 class LiveProtocolError(Exception):
@@ -64,6 +74,46 @@ async def _await_started(upstream, settings: LiveSettings) -> None:
         raise LiveProtocolError("The model did not confirm the session.")
 
     await asyncio.wait_for(receive_start(), timeout=20)
+
+
+async def _receive_start(websocket: WebSocket, settings: LiveSettings) -> tuple[str, int]:
+    frame = await asyncio.wait_for(websocket.receive(), timeout=START_TIMEOUT_SECONDS)
+    if frame["type"] == "websocket.disconnect":
+        raise WebSocketDisconnect(code=frame.get("code", 1000))
+    text = frame.get("text")
+    # JSON can encode each non-BMP character as two six-character escapes.
+    if not isinstance(text, str) or len(text) > MAX_INSTRUCTIONS_LENGTH * 12 + 1024:
+        raise ValueError("Send a start message with a system prompt before streaming audio.")
+    try:
+        message = json.loads(text)
+    except ValueError as exc:
+        raise ValueError("The start message must be valid JSON.") from exc
+    if (
+        not isinstance(message, dict)
+        or set(message) not in ({"type", "instructions"}, {"type", "instructions", "durationSeconds"})
+        or message["type"] != "start"
+    ):
+        raise ValueError("Send a start message with a system prompt before streaming audio.")
+    instructions = message["instructions"]
+    if (
+        not isinstance(instructions, str)
+        or not instructions.strip()
+        or len(instructions) > MAX_INSTRUCTIONS_LENGTH
+    ):
+        raise ValueError(
+            f"System prompt must contain 1 to {MAX_INSTRUCTIONS_LENGTH} characters and not be blank."
+        )
+    duration = message.get("durationSeconds", settings.default_session_seconds)
+    if (
+        not isinstance(duration, int)
+        or isinstance(duration, bool)
+        or not MIN_SESSION_SECONDS <= duration <= settings.max_session_seconds
+        or duration % 60
+    ):
+        raise ValueError(
+            f"Duration must be a whole number of minutes between 1 and {settings.max_session_seconds // 60}."
+        )
+    return instructions, duration
 
 
 def _from_browser(frame: dict[str, object]) -> dict[str, object] | None:
@@ -138,7 +188,7 @@ def _outgoing_event(event: dict[str, object]) -> dict[str, object] | None:
     return None
 
 
-async def _relay(websocket: WebSocket, upstream, settings: LiveSettings) -> None:
+async def _relay(websocket: WebSocket, upstream, duration_seconds: int) -> None:
     browser_connected = True
     browser_disconnected = asyncio.Event()
 
@@ -189,7 +239,7 @@ async def _relay(websocket: WebSocket, upstream, settings: LiveSettings) -> None
 
     browser_task = asyncio.create_task(receive_browser())
     model_task = asyncio.create_task(receive_model())
-    limit_task = asyncio.create_task(asyncio.sleep(settings.max_session_seconds))
+    limit_task = asyncio.create_task(asyncio.sleep(duration_seconds))
     disconnect_task = asyncio.create_task(browser_disconnected.wait())
     try:
         done, _ = await asyncio.wait(
@@ -236,6 +286,15 @@ def create_app(
     auth_manager: OIDCAuthManager | None = None,
     bootstrap_locked: bool | None = None,
 ) -> FastAPI:
+    asset_hash = hashlib.sha256()
+    for path in sorted(STATIC_ROOT.rglob("*")):
+        if path.is_file():
+            asset_hash.update(path.relative_to(STATIC_ROOT).as_posix().encode() + b"\0")
+            asset_hash.update(path.read_bytes())
+    asset_version = asset_hash.hexdigest()[:16]
+    index_html = (STATIC_ROOT / "index.html").read_text(encoding="utf-8").replace(
+        '"/static/', f'"/assets/{asset_version}/'
+    )
     locked = (
         os.getenv("BOOTSTRAP_LOCKED", "false").lower() == "true"
         if bootstrap_locked is None else bootstrap_locked
@@ -333,15 +392,21 @@ def create_app(
         return response
 
     @app.get("/api/config")
-    async def config(request: Request) -> dict[str, object]:
+    async def config(request: Request, response: Response) -> dict[str, object]:
+        response.headers["Cache-Control"] = "no-store"
         live: LiveSettings = request.app.state.settings
         identity = getattr(request.state, "identity", None)
         return {
             "model": live.deployment,
             "maxSessionSeconds": live.max_session_seconds,
+            "minSessionSeconds": MIN_SESSION_SECONDS,
+            "defaultSessionSeconds": live.default_session_seconds,
             "maxConcurrentSessions": live.max_concurrent_sessions,
             "voice": "marin",
             "user": identity.get("name") if identity else None,
+            "promptPresets": PROMPT_PRESETS,
+            "defaultPromptId": "default",
+            "maxInstructionsLength": MAX_INSTRUCTIONS_LENGTH,
         }
 
     @app.websocket("/api/live")
@@ -368,17 +433,18 @@ def create_app(
         websocket.app.state.active_sessions += 1
         try:
             await websocket.accept()
+            instructions, duration_seconds = await _receive_start(websocket, live_settings)
             service: LiveService = websocket.app.state.service
             connection = await service.open_connection()
             async with connection as upstream:
-                await upstream.send(json.dumps(live_settings.start_event()))
+                await upstream.send(json.dumps(live_settings.start_event(instructions)))
                 await _await_started(upstream, live_settings)
                 await websocket.send_json({
                     "type": "ready",
                     "model": live_settings.deployment,
-                    "maxSessionSeconds": live_settings.max_session_seconds,
+                    "maxSessionSeconds": duration_seconds,
                 })
-                await _relay(websocket, upstream, live_settings)
+                await _relay(websocket, upstream, duration_seconds)
         except WebSocketDisconnect:
             pass
         except (ClientAuthenticationError, CredentialUnavailableError):
@@ -404,14 +470,17 @@ def create_app(
 
     @app.get("/", include_in_schema=False)
     async def root():
-        return FileResponse(STATIC_ROOT / "index.html", media_type="text/html")
+        return HTMLResponse(index_html, headers={"Cache-Control": "no-store"})
 
     @app.get("/static/{file_path:path}", include_in_schema=False)
-    async def static(file_path: str):
+    @app.get("/assets/{version}/{file_path:path}", include_in_schema=False)
+    async def static(file_path: str, version: str | None = None):
+        if version is not None and version != asset_version:
+            raise HTTPException(status_code=404, detail="Not found.")
         target = (STATIC_ROOT / file_path).resolve()
         if not target.is_relative_to(STATIC_ROOT.resolve()) or not target.is_file():
             raise HTTPException(status_code=404, detail="Not found.")
-        return FileResponse(target)
+        return FileResponse(target, headers={"Cache-Control": "private, no-cache"})
 
     return app
 

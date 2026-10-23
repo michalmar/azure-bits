@@ -369,6 +369,7 @@ def _update_container_app(
     app_client_id: str,
     identity_client_id: str,
     tenant_id: str,
+    max_session_seconds: int,
     secret_name: str,
     secret_value: str | None,
     snapshot: dict[str, Any],
@@ -404,6 +405,7 @@ def _update_container_app(
                 "ENTRA_TENANT_ID": {"name": "ENTRA_TENANT_ID", "value": tenant_id},
                 "ENTRA_CLIENT_ID": {"name": "ENTRA_CLIENT_ID", "value": app_client_id},
                 "PUBLIC_BASE_URL": {"name": "PUBLIC_BASE_URL", "value": origin},
+                "MAX_SESSION_SECONDS": {"name": "MAX_SESSION_SECONDS", "value": str(max_session_seconds)},
                 "SESSION_SECRET": {"name": "SESSION_SECRET", "secretRef": SESSION_SECRET_LABEL},
                 "ENTRA_CLIENT_SECRET": {"name": "ENTRA_CLIENT_SECRET", "secretRef": secret_name},
             }
@@ -463,6 +465,7 @@ def _update_container_image(
     app_id: str,
     *,
     container_image: str,
+    max_session_seconds: int,
     snapshot: dict[str, Any],
 ) -> dict[str, Any]:
     preserved_secret_values = _snapshot_secret_values(snapshot)
@@ -473,6 +476,12 @@ def _update_container_image(
         if not containers:
             raise RuntimeError("container app has no containers")
         containers[0]["image"] = container_image
+        env = [
+            item for item in containers[0].get("env", [])
+            if item.get("name") != "MAX_SESSION_SECONDS"
+        ]
+        env.append({"name": "MAX_SESSION_SECONDS", "value": str(max_session_seconds)})
+        containers[0]["env"] = env
         try:
             return _apply_container_app_snapshot(current)
         except PreconditionFailed:
@@ -557,6 +566,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--tenant-id", required=True)
     parser.add_argument("--identity-client-id", required=True)
     parser.add_argument("--container-image")
+    parser.add_argument("--max-session-seconds", type=int, choices=range(60, 901, 60), default=900)
     parser.add_argument("--image-only", action="store_true")
     parser.add_argument("--rotate-client-secret", action="store_true")
     return parser.parse_args(argv)
@@ -595,6 +605,7 @@ def main(argv: list[str] | None = None) -> int:
             _update_container_image(
                 app_id,
                 container_image=args.container_image,
+                max_session_seconds=args.max_session_seconds,
                 snapshot=previous_app,
             )
             wait_for_container_app_provisioning(app_id)
@@ -665,6 +676,7 @@ def main(argv: list[str] | None = None) -> int:
             app_client_id=app["appId"],
             identity_client_id=args.identity_client_id,
             tenant_id=args.tenant_id,
+            max_session_seconds=args.max_session_seconds,
             secret_name=secret_name,
             secret_value=secret_value,
             session_secret_value=session_secret_value,

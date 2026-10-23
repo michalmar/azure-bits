@@ -57,6 +57,32 @@
               <span class="demo-field__hint">Voice: marin · Full-duplex audio</span>
             </div>
 
+            <div class="demo-field">
+              <span class="demo-field__label" id="durationLabel">Conversation duration</span>
+              <div class="duration-control" role="group" aria-labelledby="durationLabel" aria-describedby="durationHint">
+                <button type="button" class="demo-button demo-button--secondary" id="decreaseDuration"
+                  aria-label="Decrease duration by one minute" disabled>−</button>
+                <output id="durationMinutes" aria-live="polite">5 minutes</output>
+                <button type="button" class="demo-button demo-button--secondary" id="increaseDuration"
+                  aria-label="Increase duration by one minute" disabled>+</button>
+              </div>
+              <span class="demo-field__hint" id="durationHint">
+                1-15 minutes, one minute at a time. Locked during a conversation.
+              </span>
+            </div>
+
+            <div class="demo-field">
+              <label class="demo-field__label" for="systemPrompt">System prompt</label>
+              <div class="prompt-presets" id="promptPresets" role="group" aria-label="System prompt presets"></div>
+              <textarea class="demo-control demo-control--textarea" id="systemPrompt"
+                aria-describedby="promptHint promptSelection" rows="8" required disabled></textarea>
+              <span class="demo-field__hint" id="promptSelection" role="status">Loading prompt presets…</span>
+              <span class="demo-field__hint" id="promptHint">
+                Choose a preset or write your own instructions before starting.
+                Presets replace the text above. The prompt is locked during a conversation.
+              </span>
+            </div>
+
             <div class="signal" aria-label="Your microphone level">
               <div class="signal__head">
                 <span>Your microphone</span>

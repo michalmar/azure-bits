@@ -23,6 +23,8 @@ Run `../scripts/deploy.sh` rather than applying only the app resource on
 updates. Terraform does not manage the OAuth secret or live application
 configuration after the initial locked bootstrap; the deploy script excludes
 the existing app from foundation plans and performs a conditional ARM update
-that preserves existing secrets. If an initial deployment stops after creating
+that preserves existing secrets. The update also sets the session-duration
+ceiling to 900 seconds, while the frontend starts at five minutes.
+If an initial deployment stops after creating
 the locked app, rerun the script with the original Terraform state to finish
 configuring Entra sign-in.
