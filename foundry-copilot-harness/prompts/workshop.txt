@@ -1,0 +1,8 @@
+Použij skill workshop-planner. V přiloženém offers.csv jsou výhradně fiktivní nabídky a konečné ceny v Kč.
+Vyber místo pro jednodenní týmový workshop v Praze pro 12 lidí. Potřebujeme projektor.
+Celkový limit je 25 000 Kč včetně 10% rezervy. Použij skript dodaný ve skillu, ne mentální výpočet.
+Vysvětli, které nabídky splňují podmínky, které vyřadíš a proč. Vytvoř rozpočet CSV, strojově čitelný JSON a krátké doporučení v Markdownu.
+Samostatně použij web search pro dvě obecné rady k organizaci workshopu, se skutečnými citacemi.
+Webové rady odděl od rozhodnutí o nabídkách. Neověřuj fiktivní místa na webu a neměň jejich ceny.
+Pokud vyhledávání selže, přiznej to a dokonči výpočet bez vymyšlených citací.
+Nic nerezervuj, nikoho nekontaktuj. Všechny výsledky vrať česky.

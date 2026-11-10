@@ -1,0 +1,14 @@
+**
+!Dockerfile
+!requirements.lock
+!app/
+!app/*.py
+!data/
+!data/offers.csv
+!prompts/
+!prompts/workshop.txt
+!skills/
+!skills/workshop-planner/
+!skills/workshop-planner/SKILL.md
+!skills/workshop-planner/scripts/
+!skills/workshop-planner/scripts/calculate_budget.py

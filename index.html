@@ -58,7 +58,7 @@
         <section class="summary-tape" aria-label="Repository overview">
           <div>
             <span class="summary-tape__label">Catalog</span>
-            <strong>7 self-contained demos</strong>
+            <strong>8 self-contained demos</strong>
           </div>
           <div>
             <span class="summary-tape__label">Hosting target</span>
@@ -96,7 +96,15 @@
                 data-filter="all"
                 aria-pressed="true"
               >
-                All (7)
+                All (8)
+              </button>
+              <button
+                type="button"
+                class="filter-tab"
+                data-filter="agents"
+                aria-pressed="false"
+              >
+                Agents &amp; Harness (1)
               </button>
               <button
                 type="button"
@@ -126,10 +134,59 @@
           </div>
 
           <p id="catalogStatus" class="catalog-status" role="status" aria-live="polite">
-            Showing all 7 demos.
+            Showing all 8 demos.
           </p>
 
           <ol class="demo-catalog" id="demoCatalog">
+            <li
+              class="demo-entry"
+              data-category="agents"
+              data-keywords="foundry copilot harness agent skill yaml workshop csv python sandbox web search"
+            >
+              <div class="demo-entry__identity">
+                <div class="demo-entry__kicker">
+                  <span class="demo-entry__domain">Agents &amp; Harness</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Live demo · Entra tenant sign-in</span>
+                </div>
+                <h3 class="demo-entry__title">
+                  <a href="https://foundry-copilot-harness-demo.mangoplant-89bf92cc.swedencentral.azurecontainerapps.io">
+                    Foundry Copilot harness
+                  </a>
+                </h3>
+                <span class="demo-entry__folder">foundry-copilot-harness/</span>
+              </div>
+              <div class="demo-entry__body">
+                <p class="demo-entry__summary">
+                  One fixed prompt compares three fictional workshop offers. Inspect a
+                  versioned skill, Python execution in the managed harness sandbox, web
+                  search and verified downloadable reports. Sign in with an account
+                  in the configured Entra tenant.
+                </p>
+                <ul class="demo-entry__specs" aria-label="Technical highlights">
+                  <li><strong>Agent:</strong> Existing gpt-5.4 + Microsoft Copilot harness</li>
+                  <li><strong>Surface:</strong> One-button workbench + actual tool events</li>
+                </ul>
+              </div>
+              <div class="demo-entry__links">
+                <div class="demo-entry__primary-actions">
+                  <a class="demo-button demo-button--primary"
+                     href="https://foundry-copilot-harness-demo.mangoplant-89bf92cc.swedencentral.azurecontainerapps.io">
+                    Open live demo
+                  </a>
+                </div>
+                <div class="demo-entry__secondary-links">
+                  <a class="demo-text-link"
+                     href="https://github.com/michalmar/azure-bits/blob/main/foundry-copilot-harness/README.md">
+                    Setup guide
+                  </a>
+                  <a class="demo-text-link"
+                     href="https://github.com/michalmar/azure-bits/tree/main/foundry-copilot-harness">
+                    Source folder
+                  </a>
+                </div>
+              </div>
+            </li>
             <li
               class="demo-entry"
               data-category="governance"

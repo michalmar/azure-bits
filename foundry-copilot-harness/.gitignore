@@ -1,0 +1,13 @@
+.venv/
+.env
+.azure/
+__pycache__/
+.pytest_cache/
+*.pyc
+infra/.terraform/
+infra/*.tfstate*
+infra/*.tfplan
+infra/terraform.tfvars
+.aca-publish*
+outputs/
+deployment.json

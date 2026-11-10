@@ -1,0 +1,4 @@
+id,name,capacity,projector,rental_czk,catering_per_person_czk
+A,Atelier A,16,true,12000,600
+B,Forum B,20,true,16000,700
+C,Studio C,10,false,8000,500

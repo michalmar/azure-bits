@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Workshop planner · Copilot harness</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/tokens.css">
+  <link rel="stylesheet" href="/baseline.css">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <div class="demo-shell">
+    <header class="demo-header">
+      <a class="demo-brand" href="/"><span class="demo-brand__family">Microsoft Foundry</span><span class="demo-brand__divider" aria-hidden="true"></span><span>Copilot harness</span></a>
+      <nav class="demo-nav" aria-label="Navigace"><a class="demo-nav__item" href="#princip">Princip</a><a class="demo-nav__item" href="#workbench">Demo</a></nav>
+      <div class="demo-header__actions"><button id="logout" type="button" hidden>Odhlásit</button><a href="https://github.com/michalmar/azure-bits/tree/main/foundry-copilot-harness" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+    </header>
+    <main class="demo-main">
+      <div class="demo-page-head">
+        <h1>Vyber workshop. Sleduj agenta.</h1>
+        <p class="demo-lead">Agent vybere workshop pro tým. Foundry mu poskytne postup, nástroje a pracovní prostředí — vy nemusíte psát vlastní agent loop.</p>
+      </div>
+      <section id="princip" aria-labelledby="princip-title">
+        <details>
+        <summary id="princip-title">Jak funguje Copilot harness?</summary>
+        <div class="principles">
+          <div><span class="step-number">01</span><h3>Model rozhoduje</h3><p>Rozumí cíli a vybírá další krok. Samotná textová odpověď ale ještě není hotová práce.</p></div>
+          <div><span class="step-number">02</span><h3>Skill učí postup</h3><p>Verzovaný <code>SKILL.md</code> a Python skript určují, jak načíst nabídky, spočítat cenu a doložit závěr.</p></div>
+          <div><span class="step-number">03</span><h3>Nástroje pracují</h3><p>Čtení souboru, skutečný výpočet v sandboxu, web search a vytvoření reportu. Ne pouze tvrzení, že se to stalo.</p></div>
+          <div><span class="step-number">04</span><h3>Harness koordinuje</h3><p>Microsoft spravuje agent loop, kontext a sandbox. Vaše aplikace pouze spustí agenta přes Responses API.</p></div>
+        </div>
+        <p class="demo-support">GitHub Copilot pomáhá upravovat <code>azure.yaml</code> v repozitáři. Za běhu pracuje agent ve Foundry, ne tato lokální Copilot relace. Funkce harnessu je v preview.</p>
+        </details>
+      </section>
+      <section id="workbench" class="demo-workbench" aria-label="Workshopové demo">
+        <div class="demo-workbench__controls">
+          <div><h2>Vyber workshop.</h2><p>12 lidí · 1 den · Praha · projektor<br><strong>25 000 Kč včetně 10% rezervy</strong></p></div>
+          <p>Všechny tři nabídky, místa i ceny jsou <strong>fiktivní</strong>. Web hledá jen obecné organizační rady; nemění zadání ani ceny.</p>
+          <details><summary>Připravený prompt</summary><pre id="prompt">Načítání konfigurace…</pre></details>
+          <details><summary>Vstupní offers.csv</summary><pre id="offers">Načítání dat…</pre></details>
+          <button id="run" class="demo-button demo-button--primary" type="button" disabled>Spustit agenta</button>
+          <p id="status" role="status" aria-live="polite">Zjišťuji dostupnost dema…</p>
+          <p class="demo-support">Každé spuštění vytváří novou conversation a může být zpoplatněno. Žádné rezervace ani kontaktování provozovatelů. Limit čekání je 5 minut.</p>
+          <details><summary>Co má tato ukázka prokázat?</summary><p>Ve skutečném průběhu hledejte použití skillu, načtení CSV, výpočet pomocí shellu a web search. Příchozí události neobsahují soukromé uvažování modelu. Sandbox je spravovaný službou, ne další vámi vytvářený server.</p></details>
+        </div>
+        <div class="demo-workbench__output">
+          <section aria-labelledby="trace-title"><div class="section-head"><h2 id="trace-title">Průběh nástrojů</h2><span id="trace-summary" class="trace-summary" hidden></span></div><p class="demo-support">Pouze události skutečně vrácené službou. Ne předem připravená animace.</p><ol id="trace" class="trace-list"><li class="empty">Po spuštění se zde objeví skutečné události z Foundry.</li></ol></section>
+          <section aria-labelledby="result-title"><h2 id="result-title">Doporučení</h2><p id="verification" role="status">Zatím není k dispozici žádný výsledek.</p><div id="budget"></div><div id="result" class="markdown-body" aria-label="Odpověď agenta"></div><ul id="warnings" role="status"></ul><div id="downloads"></div><ul id="citations"></ul><p id="identifiers" class="demo-meta"></p></section>
+        </div>
+      </section>
+      <footer><p>Definice agenta je v <code>azure.yaml</code>. Vlastní backend není agent framework — slouží jen pro přihlášení, managed identity a přenos událostí.</p><a href="https://devblogs.microsoft.com/foundry/microsoft-copilot-harness-in-foundry/" target="_blank" rel="noopener noreferrer">Oficiální představení Microsoft Copilot harness ↗</a></footer>
+    </main>
+  </div>
+</body>
+</html>
