@@ -11,7 +11,6 @@
     "gpt-image-2.5-sunburst",
     "MAI-Image-2.6-Flash",
     "MAI-Image-2.6",
-    "MAI-Image-2.5",
     "gpt-image-2",
   ];
 
@@ -784,7 +783,7 @@
         refs.galleryState.textContent = "Loading gallery and model list…";
         refs.galleryEmpty.hidden = true;
         refs.galleryError.hidden = true;
-        refs.proofGrid.innerHTML = Array.from({ length: 5 }, (_, index) => `
+        refs.proofGrid.innerHTML = Array.from({ length: models.length }, (_, index) => `
           <article class="proof-plate" aria-busy="true">
             <div class="proof-plate__head">
               <h3 class="proof-plate__title">${escapeHtml(models[index]?.displayName || DEFAULT_MODEL_ORDER[index] || `Model ${index + 1}`)}</h3>

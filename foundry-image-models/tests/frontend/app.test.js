@@ -5,6 +5,45 @@ const path = require("node:path");
 
 const app = require(path.join(__dirname, "../../static/app.js"));
 
+test("gallery and playground keep four models during loading and after boot", async () => {
+  const expectedModels = [
+    "gpt-image-2.5-sunburst",
+    "MAI-Image-2.6-Flash",
+    "MAI-Image-2.6",
+    "gpt-image-2",
+  ];
+  assert.deepEqual(app.DEFAULT_MODEL_ORDER, expectedModels);
+
+  const dom = createStubDom();
+  const appInstance = app.createApp(dom.document, createFetchStub());
+  const boot = appInstance.boot();
+  assert.equal((dom.elements.proofGrid.innerHTML.match(/aria-busy="true"/g) || []).length, 4);
+  assert.doesNotMatch(dom.elements.modelSelect.innerHTML, /MAI-Image-2\.5/);
+  await boot;
+
+  assert.deepEqual(appInstance.state.models.items.map((model) => model.key), expectedModels);
+  assert.equal((dom.elements.proofGrid.innerHTML.match(/class="proof-plate"/g) || []).length, 4);
+  assert.doesNotMatch(dom.elements.proofGrid.innerHTML, /MAI-Image-2\.5/);
+  assert.doesNotMatch(dom.elements.modelSelect.innerHTML, /MAI-Image-2\.5/);
+});
+
+test("model API failures surface an error without restoring the retired model", async () => {
+  const dom = createStubDom();
+  const fetchStub = createFetchStub();
+  const appInstance = app.createApp(dom.document, (url) => (
+    url === "/api/models" ? { ok: false, status: 503 } : fetchStub(url)
+  ));
+
+  await appInstance.boot();
+
+  assert.equal(dom.elements.galleryError.hidden, false);
+  assert.match(dom.elements.galleryError.textContent, /Model request failed with status 503/);
+  assert.equal((dom.elements.modelSelect.innerHTML.match(/<option /g) || []).length, 4);
+  assert.doesNotMatch(dom.elements.modelSelect.innerHTML, /MAI-Image-2\.5/);
+  assert.equal(dom.elements.proofGrid.innerHTML, "");
+  assert.equal(dom.elements.chooseImageButton.disabled, true);
+});
+
 test("buildGenerateRequest uses multipart form data and default settings only", () => {
   const file = new File(["demo"], "reference.png", { type: "image/png" });
   const { url, init } = app.buildGenerateRequest({
@@ -229,7 +268,6 @@ function createFetchStub() {
     "gpt-image-2.5-sunburst",
     "MAI-Image-2.6-Flash",
     "MAI-Image-2.6",
-    "MAI-Image-2.5",
     "gpt-image-2",
   ].map((deploymentName, index) => ({
     id: deploymentName,
@@ -265,7 +303,6 @@ function createPromptGroup(id, title, prompt) {
       "gpt-image-2.5-sunburst",
       "MAI-Image-2.6-Flash",
       "MAI-Image-2.6",
-      "MAI-Image-2.5",
       "gpt-image-2",
     ].map((deploymentName, index) => ({
       deploymentName,

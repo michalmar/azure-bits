@@ -3,7 +3,7 @@
 ## Direction
 
 **Clear comparison** makes the product mechanism visible before the interface:
-one prompt, five models, five images. The visual system combines Stripe-like
+one prompt, four models, four images. The visual system combines Stripe-like
 information confidence with Apple-like restraint. A solid near-black header
 anchors a white workspace; generated images provide the visual richness while
 the interface stays exact and quiet.
@@ -48,7 +48,7 @@ for the active navigation line and small supporting emphasis.
 - Horizontal gutters scale from `20px` to `64px`.
 - A solid ink sticky header strip contains the product mark, Gallery/Playground
   navigation, initials avatar, logout action, and GitHub link.
-- Gallery desktop: five equal image columns separated by whitespace.
+- Gallery desktop: four equal image columns separated by whitespace.
 - Gallery narrow screens: a large horizontal snap rail, with one model occupying
   most of the viewport.
 - Playground desktop: a compact controls column and a dominant output column,
@@ -92,8 +92,8 @@ for the active navigation line and small supporting emphasis.
 ## Direction contract
 
 <!--
-THESIS: The same prompt across five models is the product; the interface refuses dashboard cards and lets evidence lead.
-OWN-WORLD: White light, ink-blue type, cool gray rules, near-black actions, square-edged controls, and one thin five-model spectrum.
+THESIS: The same prompt across four models is the product; the interface refuses dashboard cards and lets evidence lead.
+OWN-WORLD: White light, ink-blue type, cool gray rules, near-black actions, square-edged controls, and one thin four-model spectrum.
 STORY: Understand the comparison immediately, inspect one prompt across every model, then generate, download, or clear a private session.
 FIRST VIEWPORT: A sticky product strip holds view navigation, identity, logout, and GitHub; the active workspace begins immediately below it.
 FORM: Precision comparison surface, balancing Stripe-like information confidence with Apple-like restraint and material simplicity.

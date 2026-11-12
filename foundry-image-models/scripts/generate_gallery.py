@@ -87,7 +87,11 @@ def _failure_result(prompt: dict[str, str], model: str, error: str) -> dict[str,
 def _sync_existing_results(manifest: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
     results: dict[tuple[str, str], dict[str, Any]] = {}
     for item in manifest.get("results", []):
-        if isinstance(item, dict) and item.get("status") == "generated":
+        if (
+            isinstance(item, dict)
+            and item.get("status") == "generated"
+            and item.get("model") in ALLOWED_MODELS
+        ):
             results[_result_key(item)] = item
     for prompt in GALLERY_PROMPTS:
         for model in ALLOWED_MODELS:

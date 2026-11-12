@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import shutil
 from pathlib import Path
 
@@ -23,6 +24,73 @@ def test_gallery_endpoint_returns_generation_guidance_when_manifest_missing(monk
     assert payload["results"] == []
     assert payload["prompts"] == list(GALLERY_PROMPTS)
     assert "generationGuidance" in payload
+
+
+def test_shipped_gallery_contains_twelve_images_for_four_models():
+    service = FoundryService(credential=object())
+    with make_client(service) as client:
+        response = client.get("/api/gallery")
+
+    assert response.status_code == 200
+    manifest = response.json()
+    models = {
+        "gpt-image-2.5-sunburst",
+        "MAI-Image-2.6-Flash",
+        "MAI-Image-2.6",
+        "gpt-image-2",
+    }
+    prompts = {prompt["id"]: prompt for prompt in manifest["prompts"]}
+    assert len(prompts) == 3
+    assert len(manifest["results"]) == 12
+    assert {(item["promptId"], item["model"]) for item in manifest["results"]} == {
+        (prompt_id, model) for prompt_id in prompts for model in models
+    }
+    files = set()
+    for item in manifest["results"]:
+        assert item["status"] == "generated"
+        assert item["prompt"] == prompts[item["promptId"]]["prompt"]
+        path = Path("static/gallery") / item["file"]
+        assert path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+        files.add(path)
+    assert files == set(Path("static/gallery").glob("*/*.png"))
+
+
+def test_gallery_generator_drops_retired_results_without_regenerating_existing_images(monkeypatch, tmp_path):
+    from scripts import generate_gallery
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(generate_gallery, "AzureCliCredential", lambda: object())
+    models = (
+        "gpt-image-2.5-sunburst",
+        "MAI-Image-2.6-Flash",
+        "MAI-Image-2.6",
+        "gpt-image-2",
+    )
+    results = []
+    for prompt in GALLERY_PROMPTS:
+        for model in (*models, "MAI-Image-2.5"):
+            target = Path("static/gallery") / prompt["id"] / (model.lower().replace(".", "-") + ".png")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(b"existing image")
+            results.append({
+                "promptId": prompt["id"],
+                "model": model,
+                "file": str(target.relative_to("static/gallery")),
+                "status": "generated",
+            })
+
+    manifest_path = Path("static/gallery/manifest.json")
+    manifest_path.write_text(json.dumps({"prompts": list(GALLERY_PROMPTS), "results": results}))
+
+    assert asyncio.run(generate_gallery.generate_gallery(concurrency=2, force=False)) == 0
+
+    manifest = json.loads(manifest_path.read_text())
+    assert len(manifest["results"]) == 12
+    assert {item["model"] for item in manifest["results"]} == set(models)
+    assert manifest["status"] == "complete"
+    assert manifest["failedCount"] == 0
+    for item in manifest["results"]:
+        assert (manifest_path.parent / item["file"]).read_bytes() == b"existing image"
 
 
 def test_gallery_generator_resumes_from_manifest_and_existing_files(monkeypatch):

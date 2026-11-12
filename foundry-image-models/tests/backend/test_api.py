@@ -6,7 +6,6 @@ import json
 
 import pytest
 
-from app.config import ALLOWED_MODELS
 from tests.backend.helpers import make_client, make_service
 
 
@@ -40,7 +39,12 @@ def test_models_route_uses_management_scope_and_returns_all_models():
 
     assert response.status_code == 200
     data = response.json()
-    assert [model["name"] for model in data["models"]] == list(ALLOWED_MODELS)
+    assert [model["name"] for model in data["models"]] == [
+        "gpt-image-2.5-sunburst",
+        "MAI-Image-2.6-Flash",
+        "MAI-Image-2.6",
+        "gpt-image-2",
+    ]
     assert data["models"][0]["capabilities"]["imageEdits"]["status"] == "ready"
     assert data["models"][1]["capabilities"]["imageEdits"]["status"] == "unsupported"
     assert cred.scopes == ["https://management.azure.com/.default"]
@@ -55,7 +59,7 @@ def test_management_capabilities_accept_string_booleans():
             json={
                 "value": [
                     {"name": "gpt-image-2", "capabilities": {"imageEdits": "true"}},
-                    {"name": "MAI-Image-2.5", "capabilities": {"imageEdits": "false"}},
+                    {"name": "MAI-Image-2.6", "capabilities": {"imageEdits": "false"}},
                 ]
             },
         )
@@ -65,8 +69,27 @@ def test_management_capabilities_accept_string_booleans():
 
     assert parsed["gpt-image-2"].status == "ready"
     assert parsed["gpt-image-2"].image_edits is True
-    assert parsed["MAI-Image-2.5"].status == "unsupported"
-    assert parsed["MAI-Image-2.5"].image_edits is False
+    assert parsed["MAI-Image-2.6"].status == "unsupported"
+    assert parsed["MAI-Image-2.6"].image_edits is False
+
+
+@pytest.mark.parametrize("model", ["MAI-Image-2.5", "MAI-Image-2.5-Flash", "MAI-Image-2.5-Pro"])
+@pytest.mark.parametrize("with_image", [False, True])
+def test_retired_models_are_rejected_without_upstream_requests(model, with_image):
+    def responder(request):
+        raise AssertionError("retired models must not reach upstream APIs")
+
+    service, credential = make_service(responder)
+    files = [("model", (None, model)), ("prompt", (None, "retired model prompt"))]
+    if with_image:
+        files.append(("image", ("sample.png", b"\x89PNG\r\n\x1a\nabc", "image/png")))
+
+    with make_client(service) as client:
+        response = client.post("/api/generate", files=files)
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "unsupported model"
+    assert credential.scopes == []
 
 
 @pytest.mark.parametrize(
@@ -257,7 +280,6 @@ def test_capability_failure_keeps_last_good_snapshot():
                         {"name": "gpt-image-2.5-sunburst", "capabilities": {"imageEdits": True}},
                         {"name": "MAI-Image-2.6-Flash", "capabilities": {"imageEdits": False}},
                         {"name": "MAI-Image-2.6", "capabilities": {"imageEdits": True}},
-                        {"name": "MAI-Image-2.5", "capabilities": {"imageEdits": True}},
                         {"name": "gpt-image-2", "capabilities": {"imageEdits": False}},
                     ]
                 },

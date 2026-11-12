@@ -15,7 +15,6 @@ ALLOWED_MODELS = (
     "gpt-image-2.5-sunburst",
     "MAI-Image-2.6-Flash",
     "MAI-Image-2.6",
-    "MAI-Image-2.5",
     "gpt-image-2",
 )
 
@@ -24,7 +23,6 @@ MODEL_PROVIDER = {
     "gpt-image-2": "openai",
     "MAI-Image-2.6-Flash": "mai",
     "MAI-Image-2.6": "mai",
-    "MAI-Image-2.5": "mai",
 }
 
 MODEL_DEPLOYMENT = {

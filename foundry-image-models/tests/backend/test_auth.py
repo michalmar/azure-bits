@@ -107,7 +107,6 @@ def test_authentication_protects_app_and_allows_callback_flow(auth_setup):
                         {"name": "gpt-image-2.5-sunburst", "capabilities": {"imageEdits": True}},
                         {"name": "MAI-Image-2.6-Flash", "capabilities": {"imageEdits": False}},
                         {"name": "MAI-Image-2.6", "capabilities": {"imageEdits": True}},
-                        {"name": "MAI-Image-2.5", "capabilities": {"imageEdits": True}},
                         {"name": "gpt-image-2", "capabilities": {"imageEdits": False}},
                     ]
                 },

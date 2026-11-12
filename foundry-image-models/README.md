@@ -1,15 +1,15 @@
 # Foundry image models demo
 
-A customer-ready comparison gallery and interactive playground for five image
+A customer-ready comparison gallery and interactive playground for four image
 deployments in Microsoft Foundry:
 
 - `gpt-image-2.5-sunburst`
 - `MAI-Image-2.6-Flash`
 - `MAI-Image-2.6`
-- `MAI-Image-2.5`
 - `gpt-image-2`
 
-The gallery contains three fixed prompts and one generated result from every model.
+The gallery contains three fixed prompts and one generated result from every model,
+for 12 comparison images.
 The playground supports prompt-only generation and image-plus-prompt editing when the
 model capability API reports `imageEdits: true`.
 
@@ -93,7 +93,8 @@ export AZD_CONFIG_DIR="$HOME/.azd-365"
 
 Generation is resumable. Successful images are checkpointed after each result, and a
 partial run exits nonzero while preserving completed work. Use `--force` to regenerate
-existing successful images.
+existing successful images. Results for models outside the current allowlist are
+removed from the manifest when resuming.
 
 Image generation can take several minutes. Override the five-minute upstream timeout
 only when needed:

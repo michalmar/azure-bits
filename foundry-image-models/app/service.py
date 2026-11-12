@@ -405,7 +405,7 @@ class FoundryService:
         return {
             "prompts": list(GALLERY_PROMPTS),
             "results": [],
-            "generationGuidance": "Run scripts/generate_gallery.py to create the 15-image comparison gallery.",
+            "generationGuidance": "Run scripts/generate_gallery.py to create the 12-image comparison gallery.",
         }
 
     def read_gallery_manifest(self) -> dict[str, Any]:

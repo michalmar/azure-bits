@@ -15,7 +15,7 @@ Foundry image models during a live demonstration or technical workshop.
 
 Provide a small, deployment-ready demo that makes image-model differences easy to
 see and lets users safely try their own prompts. Success means a presenter can compare
-all five deployed models with the same inputs, then let an audience member generate and
+all four supported models with the same inputs, then let an audience member generate and
 download an image without leaving durable user content behind.
 
 ## Positioning
@@ -32,9 +32,9 @@ model result in isolation.
   deployment configuration.
 - Calls these existing deployments:
   `gpt-image-2.5-sunburst`, `MAI-Image-2.6-Flash`, `MAI-Image-2.6`,
-  `MAI-Image-2.5`, and `gpt-image-2`.
+  and `gpt-image-2`.
 - The gallery contains three fixed prompts and one output from every model for each
-  prompt, for 15 comparison images total.
+  prompt, for 12 comparison images total.
 
 ## Capabilities and Constraints
 
@@ -61,7 +61,7 @@ model result in isolation.
 
 ## Evidence on Hand
 
-- Five model deployments already exist in the configured Foundry project.
+- The four supported model deployments already exist in the configured Foundry project.
 - No approved benchmark claims, customer logos, testimonials, or model-quality
   rankings are available and must not be invented.
 - Gallery outputs are synthetic demonstrations and should be labeled as such.
